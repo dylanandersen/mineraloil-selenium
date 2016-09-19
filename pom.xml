@@ -12,7 +12,7 @@
     <artifactId>mineraloil-selenium</artifactId>
     <name>mineraloil-selenium</name>
     <url>https://github.com/lithiumtech/mineraloil-selenium</url>
-    <version>0.1.61</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <description>
@@ -54,6 +54,19 @@
                         <encoding>UTF-8</encoding>
                         <showWarnings>true</showWarnings>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
