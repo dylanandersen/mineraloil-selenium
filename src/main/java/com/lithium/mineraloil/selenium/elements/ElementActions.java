@@ -30,6 +30,10 @@ public interface ElementActions {
 
     By getBy();
 
+    By getCollapsedXpathBy();
+
+    Element getIframeElement();
+
     boolean isInDOM();
 
     boolean isDisplayed();

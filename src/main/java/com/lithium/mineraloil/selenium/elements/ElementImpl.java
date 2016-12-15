@@ -14,6 +14,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -25,10 +26,11 @@ class ElementImpl<T extends Element> implements Element<T> {
     private Element referenceElement;
     private boolean scrollIntoView = false;
 
-    @Setter private Element iframeElement;
+    @Setter @Getter private Element iframeElement;
     @Setter private Element hoverElement;
     @Getter private Element parentElement;
     @Getter private final By by;
+    @Getter private By collapsedXpathBy;
     @Getter private WebElement webElement;
 
 
@@ -47,6 +49,7 @@ class ElementImpl<T extends Element> implements Element<T> {
         this.referenceElement = referenceElement;
         this.parentElement = parentElement;
         this.by = by;
+        this.collapsedXpathBy = collapseXpath();
     }
 
     public ElementImpl(Element<T> referenceElement, Element parentElement, By by, int index) {
@@ -108,11 +111,9 @@ class ElementImpl<T extends Element> implements Element<T> {
             }
         }
 
+        By currentBy = Optional.ofNullable(collapsedXpathBy).orElse(by);
         if (parentElement != null) {
-            By parentBy = by;
-            if (by instanceof ByXPath) {
-                parentBy = getByForParentElement(by);
-            }
+            By parentBy = getByForParentElement(currentBy);
             if (index >= 0) {
                 List<WebElement> elements = parentElement.locateElement().findElements(parentBy);
                 if (index > elements.size() - 1) {
@@ -124,13 +125,13 @@ class ElementImpl<T extends Element> implements Element<T> {
             }
         } else {
             if (index >= 0) {
-                List<WebElement> elements = DriverManager.INSTANCE.getDriver().findElements(by);
+                List<WebElement> elements = DriverManager.INSTANCE.getDriver().findElements(currentBy);
                 if (index > elements.size() - 1) {
                     throw new NoSuchElementException(String.format("Unable to locate an element at index: %s using %s", index, getBy()));
                 }
                 webElement = elements.get(index);
             } else {
-                webElement = DriverManager.INSTANCE.getDriver().findElement(by);
+                webElement = DriverManager.INSTANCE.getDriver().findElement(currentBy);
             }
         }
 
@@ -494,6 +495,7 @@ class ElementImpl<T extends Element> implements Element<T> {
     @Override
     public T withParent(Element parentElement) {
         this.parentElement = parentElement;
+        this.collapsedXpathBy = collapseXpath();
         return (T) referenceElement;
     }
 
@@ -525,6 +527,22 @@ class ElementImpl<T extends Element> implements Element<T> {
         if (by instanceof ByXPath) {
             String xpath = by.toString().replace("By.xpath: ", "").replaceFirst("^.?//", ".//");
             return By.xpath(xpath);
+        }
+        return by;
+    }
+
+    public static String extractSelector(By by) {
+        return by.toString().replaceFirst("By\\.\\w+:\\s\\.?", "");
+    }
+
+    public By collapseXpath() {
+        if (parentElement != null) {
+            By usedBy = Optional.ofNullable(parentElement.getCollapsedXpathBy()).orElse(parentElement.getBy());
+            if (parentElement.getIframeElement() == null && usedBy instanceof ByXPath) {
+                String xpath = extractSelector(usedBy) + extractSelector(by);
+                parentElement = parentElement.getParentElement();
+                return By.xpath(xpath);
+            }
         }
         return by;
     }
