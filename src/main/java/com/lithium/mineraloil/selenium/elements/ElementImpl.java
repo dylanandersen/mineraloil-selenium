@@ -22,16 +22,19 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Slf4j
 class ElementImpl<T extends Element> implements Element<T> {
-    private int index = -1;
+    @Getter private int index = -1;
     private Element referenceElement;
-    private boolean scrollIntoView = false;
+    @Getter private boolean scrollIntoView = false;
 
     @Setter @Getter private Element iframeElement;
-    @Setter private Element hoverElement;
+    @Setter @Getter private Element hoverElement;
     @Getter private Element parentElement;
     @Getter private final By by;
-    @Getter private By collapsedXpathBy;
     @Getter private WebElement webElement;
+
+    @Getter private By collapsedXpathBy;
+    @Getter private Element collapsedParent;
+    @Getter private Element collapsedHoverElement;
 
 
     public ElementImpl(Element<T> referenceElement, By by) {
@@ -97,7 +100,8 @@ class ElementImpl<T extends Element> implements Element<T> {
             switchFocusFromIFrame();
         }
 
-        if (hoverElement != null && hoverElement.isDisplayed()) hoverElement.hover();
+        Element currentHoverElement = Optional.ofNullable(collapsedHoverElement).orElse(hoverElement);
+        if (currentHoverElement != null && currentHoverElement.isDisplayed()) currentHoverElement.hover();
 
         // cache element
         if (webElement != null) {
@@ -112,16 +116,17 @@ class ElementImpl<T extends Element> implements Element<T> {
         }
 
         By currentBy = Optional.ofNullable(collapsedXpathBy).orElse(by);
-        if (parentElement != null) {
+        Element parent = Optional.ofNullable(collapsedParent).orElse(parentElement);
+        if (parent != null) {
             By parentBy = getByForParentElement(currentBy);
             if (index >= 0) {
-                List<WebElement> elements = parentElement.locateElement().findElements(parentBy);
+                List<WebElement> elements = parent.locateElement().findElements(parentBy);
                 if (index > elements.size() - 1) {
                     throw new NoSuchElementException(String.format("Unable to locate an element at index: %s using %s", index, getBy()));
                 }
                 webElement = elements.get(index);
             } else {
-                webElement = parentElement.locateElement().findElement(parentBy);
+                webElement = parent.locateElement().findElement(parentBy);
             }
         } else {
             if (index >= 0) {
@@ -483,6 +488,7 @@ class ElementImpl<T extends Element> implements Element<T> {
     @Override
     public T withHover(Element hoverElement) {
         this.hoverElement = hoverElement;
+        collapseHoverXpath();
         return (T) referenceElement;
     }
 
@@ -536,15 +542,31 @@ class ElementImpl<T extends Element> implements Element<T> {
     }
 
     public By collapseXpath() {
-        if (parentElement != null) {
+        if (parentElement != null && by instanceof ByXPath) {
             By usedBy = Optional.ofNullable(parentElement.getCollapsedXpathBy()).orElse(parentElement.getBy());
-            if (parentElement.getIframeElement() == null && usedBy instanceof ByXPath) {
+            if (parentElement.getIframeElement() == null && parentElement.getIndex() < 0 && usedBy instanceof ByXPath
+                    && !parentElement.isScrollIntoView()) {
                 String xpath = extractSelector(usedBy) + extractSelector(by);
-                parentElement = parentElement.getParentElement();
+                collapsedHoverElement = parentElement.getHoverElement();
+                collapsedParent = parentElement.getParentElement();
                 return By.xpath(xpath);
             }
         }
-        return by;
+        return null;
     }
+
+    // Assumes the child has a hover element
+    private void collapseHoverXpath() {
+        if (parentElement != null) {
+            if (parentElement.getHoverElement() != null) {
+                collapsedXpathBy = null;
+                collapsedParent = null;
+                collapsedHoverElement = null;
+            } else {
+                collapsedHoverElement = parentElement.getHoverElement();
+            }
+        }
+    }
+
 
 }

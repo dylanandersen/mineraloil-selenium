@@ -2,15 +2,18 @@ package com.lithium.mineraloil.selenium.elements;
 
 import com.lithium.mineraloil.selenium.exceptions.ElementListException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.WebElement;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 public class ElementList<T extends Element> extends AbstractList<T> {
     protected final By by;
+    protected By combinedBy;
     private Class className;
     private Element<T> parentElement;
     private Element<T> iframeElement;
@@ -71,6 +74,7 @@ public class ElementList<T extends Element> extends AbstractList<T> {
 
     public ElementList<T> withParent(Element parentElement) {
         this.parentElement = parentElement;
+        this.combinedBy = collapseXpath();
         return this;
     }
 
@@ -108,5 +112,17 @@ public class ElementList<T extends Element> extends AbstractList<T> {
                                        .withHover(hoverElement);
         if (autoScrollIntoView) element.withAutoScrollIntoView();
         return element;
+    }
+
+    public By collapseXpath() {
+        if (parentElement != null && by instanceof ByXPath) {
+            By usedBy = Optional.ofNullable(parentElement.getCollapsedXpathBy()).orElse(parentElement.getBy());
+            if (parentElement.getIframeElement() == null && usedBy instanceof ByXPath) {
+                String xpath = ElementImpl.extractSelector(usedBy) + ElementImpl.extractSelector(by);
+                parentElement = parentElement.getParentElement();
+                return By.xpath(xpath);
+            }
+        }
+        return by;
     }
 }

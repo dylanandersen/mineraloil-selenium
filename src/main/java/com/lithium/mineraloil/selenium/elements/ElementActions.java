@@ -28,6 +28,12 @@ public interface ElementActions {
 
     Element getParentElement();
 
+    Element getHoverElement();
+
+    boolean isScrollIntoView();
+
+    int getIndex();
+
     By getBy();
 
     By getCollapsedXpathBy();
