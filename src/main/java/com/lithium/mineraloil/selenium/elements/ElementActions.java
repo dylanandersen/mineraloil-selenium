@@ -30,6 +30,8 @@ public interface ElementActions {
 
     Element getHoverElement();
 
+    Element getCollapsedParent();
+
     boolean isScrollIntoView();
 
     int getIndex();

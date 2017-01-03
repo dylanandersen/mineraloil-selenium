@@ -116,7 +116,7 @@ class ElementImpl<T extends Element> implements Element<T> {
         }
 
         By currentBy = Optional.ofNullable(collapsedXpathBy).orElse(by);
-        Element parent = Optional.ofNullable(collapsedParent).orElse(parentElement);
+        Element parent = collapsedXpathBy == null ? parentElement : collapsedParent;
         if (parent != null) {
             By parentBy = getByForParentElement(currentBy);
             if (index >= 0) {
@@ -548,7 +548,8 @@ class ElementImpl<T extends Element> implements Element<T> {
                     && !parentElement.isScrollIntoView()) {
                 String xpath = extractSelector(usedBy) + extractSelector(by);
                 collapsedHoverElement = parentElement.getHoverElement();
-                collapsedParent = parentElement.getParentElement();
+                collapsedParent = parentElement;
+                collapsedParent = collapsedParent.getCollapsedParent();
                 return By.xpath(xpath);
             }
         }
@@ -558,6 +559,7 @@ class ElementImpl<T extends Element> implements Element<T> {
     // Assumes the child has a hover element
     private void collapseHoverXpath() {
         if (parentElement != null) {
+            // Reverts any collapsing that happened if the parentElement has a hoverElement
             if (parentElement.getHoverElement() != null) {
                 collapsedXpathBy = null;
                 collapsedParent = null;

@@ -1,12 +1,12 @@
 package com.lithium.mineraloil.selenium.elements;
 
-import org.junit.Ignore;
+import com.lithium.mineraloil.selenium.helpers.BaseTest;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NestedXpathTest {
+public class NestedXpathTest extends BaseTest {
 
     @Test
     public void nestedElementCollapseXpath() {
@@ -15,15 +15,19 @@ public class NestedXpathTest {
         BaseElement levelThree = levelTwo.createBaseElement(By.xpath("//div[@id='level_3']"));
         BaseElement levelFour = levelThree.createBaseElement(By.xpath("//div[@id='level_4']"));
         assertThat(levelOne.getCollapsedXpathBy()).isNull();
+        assertThat(levelOne.getParentElement()).isNull();
         assertThat(levelTwo.getCollapsedXpathBy()).isEqualTo(By.xpath("//div[@id='level_1']//div[@id='level_2']"));
+        assertThat(levelTwo.getCollapsedParent()).isNull();
         assertThat(levelThree.getCollapsedXpathBy()).isEqualTo(By.xpath("//div[@id='level_1']//div[@id='level_2']//div[@id='level_3']"));
+        assertThat(levelThree.getCollapsedParent()).isNull();
         assertThat(levelFour.getCollapsedXpathBy()).isEqualTo(By.xpath("//div[@id='level_1']//div[@id='level_2']//div[@id='level_3']//div[@id='level_4']"));
-//        assertThat(levelThree.getText()).contains("Level 3", "Welcome to the last level");
-//        assertThat(levelTwo.getText()).contains("Level 2", "Level 3", "Welcome to the last level");
-//        assertThat(levelOne.getText()).contains("Level 1", "Level 2", "Level 3", "Welcome to the last level");
+        assertThat(levelThree.getCollapsedParent()).isNull();
+
+        assertThat(levelThree.getText()).contains("Level 3", "Welcome to the last level");
+        assertThat(levelTwo.getText()).contains("Level 2", "Level 3", "Welcome to the last level");
+        assertThat(levelOne.getText()).contains("Level 1", "Level 2", "Level 3", "Welcome to the last level");
     }
 
-    @Ignore
     @Test
     public void nestedElementList() {
         ElementList<BaseElement> list = new ElementList<>(By.xpath("//li[@class='nested_item']"), BaseElement.class);
@@ -33,7 +37,6 @@ public class NestedXpathTest {
         assertThat(list.get(2).getText()).isEqualTo("Item 3");
     }
 
-    @Ignore
     @Test
     public void nestedElementListWithNestedElement() {
         ElementList<BaseElement> list = new ElementList<>(By.xpath("//li[@class='nested_item']"), BaseElement.class);
@@ -82,7 +85,6 @@ public class NestedXpathTest {
 
     }
 
-    @Ignore
     @Test
     public void nestedElementListWithNestedDivs() {
         BaseElement listContainer = new BaseElement(By.xpath("//div[@id='nested_list_container']"));
