@@ -34,7 +34,6 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Getter private By collapsedXpathBy;
     @Getter private Element collapsedParent;
-    @Getter private Element collapsedHoverElement;
 
 
     public ElementImpl(Element<T> referenceElement, By by) {
@@ -100,8 +99,7 @@ class ElementImpl<T extends Element> implements Element<T> {
             switchFocusFromIFrame();
         }
 
-        Element currentHoverElement = Optional.ofNullable(collapsedHoverElement).orElse(hoverElement);
-        if (currentHoverElement != null && currentHoverElement.isDisplayed()) currentHoverElement.hover();
+        if (hoverElement != null && hoverElement.isDisplayed()) hoverElement.hover();
 
         // cache element
         if (webElement != null) {
@@ -488,7 +486,6 @@ class ElementImpl<T extends Element> implements Element<T> {
     @Override
     public T withHover(Element hoverElement) {
         this.hoverElement = hoverElement;
-        collapseHoverXpath();
         return (T) referenceElement;
     }
 
@@ -542,32 +539,17 @@ class ElementImpl<T extends Element> implements Element<T> {
     }
 
     public By collapseXpath() {
-        if (parentElement != null && by instanceof ByXPath) {
+        if (parentElement != null && by instanceof ByXPath && parentElement.getIframeElement() == null && parentElement.getIndex() < 0) {
             By usedBy = Optional.ofNullable(parentElement.getCollapsedXpathBy()).orElse(parentElement.getBy());
-            if (parentElement.getIframeElement() == null && parentElement.getIndex() < 0 && usedBy instanceof ByXPath
-                    && !parentElement.isScrollIntoView()) {
+            if (usedBy instanceof ByXPath && !parentElement.isScrollIntoView()) {
                 String xpath = extractSelector(usedBy) + extractSelector(by);
-                collapsedHoverElement = parentElement.getHoverElement();
+                hoverElement = parentElement.getHoverElement();
                 collapsedParent = parentElement;
                 collapsedParent = collapsedParent.getCollapsedParent();
                 return By.xpath(xpath);
             }
         }
         return null;
-    }
-
-    // Assumes the child has a hover element
-    private void collapseHoverXpath() {
-        if (parentElement != null) {
-            // Reverts any collapsing that happened if the parentElement has a hoverElement
-            if (parentElement.getHoverElement() != null) {
-                collapsedXpathBy = null;
-                collapsedParent = null;
-                collapsedHoverElement = null;
-            } else {
-                collapsedHoverElement = parentElement.getHoverElement();
-            }
-        }
     }
 
 

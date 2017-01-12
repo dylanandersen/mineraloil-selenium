@@ -20,9 +20,7 @@ public class ElementList<T extends Element> extends AbstractList<T> {
     private Element<T> hoverElement;
     private boolean autoScrollIntoView;
 
-    private By collapsedXpathBy;
     private Element collapsedParent;
-    private Element collapsedHoverElement;
 
     public ElementList(By by, Class className) {
         this.by = by;
@@ -84,7 +82,6 @@ public class ElementList<T extends Element> extends AbstractList<T> {
 
     public ElementList<T> withHover(Element hoverElement) {
         this.hoverElement = hoverElement;
-        collapseHoverXpath();
         return this;
     }
 
@@ -120,31 +117,17 @@ public class ElementList<T extends Element> extends AbstractList<T> {
     }
 
     public By collapseXpath() {
-        if (parentElement != null && by instanceof ByXPath) {
+        if (parentElement != null && by instanceof ByXPath && parentElement.getIframeElement() == null && parentElement.getIndex() < 0 ) {
             By usedBy = Optional.ofNullable(parentElement.getCollapsedXpathBy()).orElse(parentElement.getBy());
-            if (parentElement.getIframeElement() == null && parentElement.getIndex() < 0 && usedBy instanceof ByXPath
+            if (usedBy instanceof ByXPath
                     && !parentElement.isScrollIntoView()) {
                 String xpath = ElementImpl.extractSelector(usedBy) + ElementImpl.extractSelector(by);
-                collapsedHoverElement = parentElement.getHoverElement();
+                hoverElement = parentElement.getHoverElement();
                 collapsedParent = parentElement;
                 collapsedParent = collapsedParent.getCollapsedParent();
                 return By.xpath(xpath);
             }
         }
         return null;
-    }
-
-    // Assumes the child has a hover element
-    private void collapseHoverXpath() {
-        if (parentElement != null) {
-            // Reverts any collapsing that happened if the parentElement has a hoverElement
-            if (parentElement.getHoverElement() != null) {
-                collapsedXpathBy = null;
-                collapsedParent = null;
-                collapsedHoverElement = null;
-            } else {
-                collapsedHoverElement = parentElement.getHoverElement();
-            }
-        }
     }
 }
