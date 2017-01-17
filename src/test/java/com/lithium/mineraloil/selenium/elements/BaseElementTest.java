@@ -10,7 +10,7 @@ public class BaseElementTest extends BaseTest {
 
     @Test
     public void baseElementLocateElement() {
-        BaseElement div = driver.createElement(By.xpath("//div[@id='displayed_element']"));
+        BaseElement div = driver.createBaseElement(By.xpath("//div[@id='displayed_element']"));
         assertThat(div.isDisplayed()).isTrue();
         assertThat(div.getTagName()).isEqualTo("div");
         assertThat(div.getCssValue("display")).isEqualTo("inline");
@@ -18,7 +18,7 @@ public class BaseElementTest extends BaseTest {
 
     @Test
     public void nestedElementLocate() {
-        BaseElement grandparent = driver.createElement(By.xpath("//div[@id='nested_div']"));
+        BaseElement grandparent = driver.createBaseElement(By.xpath("//div[@id='nested_div']"));
         BaseElement parent = grandparent.createBaseElement(By.xpath("div[@id='last_level']"));
         BaseElement child = parent.createBaseElement(By.xpath("div[@class='duplicate_class']"));
         assertThat(child.getText()).isEqualTo("Nested Value With Shared Class");
@@ -26,22 +26,22 @@ public class BaseElementTest extends BaseTest {
 
     @Test
     public void doubleSlashNestedElementLocate() {
-        BaseElement parent = driver.createElement(By.xpath("//div[@id='nested_div']"));
+        BaseElement parent = driver.createBaseElement(By.xpath("//div[@id='nested_div']"));
         BaseElement child = parent.createBaseElement(By.xpath("//div[@class='duplicate_class']"));
         assertThat(child.getText()).isEqualTo("Nested Value With Shared Class");
     }
 
     @Test
     public void dotDoubleSlashNestedElementLocate() {
-        BaseElement parent = driver.createElement(By.xpath("//div[@id='nested_div']"));
+        BaseElement parent = driver.createBaseElement(By.xpath("//div[@id='nested_div']"));
         BaseElement child = parent.createBaseElement(By.xpath(".//div[@class='duplicate_class']"));
         assertThat(child.getText()).isEqualTo("Nested Value With Shared Class");
     }
 
     @Test
     public void grabElementFromIframe() {
-        BaseElement div = driver.createElement(By.xpath("//div[@id='iframe_div']"));
-        BaseElement iframe = driver.createElement(By.xpath("//iframe"));
+        BaseElement div = driver.createBaseElement(By.xpath("//div[@id='iframe_div']"));
+        BaseElement iframe = driver.createBaseElement(By.xpath("//iframe"));
         assertThat(div.isDisplayed()).isFalse();
         assertThat(div.withIframe(iframe).getText()).isEqualTo("Iframe Things!");
     }
