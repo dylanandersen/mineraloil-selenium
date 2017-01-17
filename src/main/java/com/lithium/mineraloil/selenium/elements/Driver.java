@@ -112,7 +112,7 @@ public class Driver {
         }
     }
 
-    public void stopAllDrivers() {
+    public void stop() {
         while (isDriverStarted()) {
             try {
                 stopDriver();
@@ -173,11 +173,11 @@ public class Driver {
     }
 
 
-    public BaseElement createElement(By by) {
+    public BaseElement createBaseElement(By by) {
         return new BaseElement(this, by);
     }
 
-    public ElementList<BaseElement> createElements(By by) {
+    public ElementList<BaseElement> createBaseElements(By by) {
         return new ElementList<>(this, by, BaseElement.class);
     }
 

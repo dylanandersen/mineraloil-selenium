@@ -521,8 +521,8 @@ class ElementImpl<T extends Element> implements Element<T> {
     Allows users to be able to do a complete node search within its parent without
     having to always remember to add .// before the xpath
     Example:
-          parent.createElement("//div[@id='testId']");
-          parent.createElement(".//div[@id='testId']");
+          parent.createBaseElement("//div[@id='testId']");
+          parent.createBaseElement(".//div[@id='testId']");
 
     Both examples will now search within the parent.
     */

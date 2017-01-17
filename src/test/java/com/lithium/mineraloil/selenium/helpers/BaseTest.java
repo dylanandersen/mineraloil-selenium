@@ -19,7 +19,7 @@ public class BaseTest {
 
     @After
     public void teardown() {
-        driver.stopAllDrivers();
+        driver.stop();
     }
 
     protected DriverConfiguration getDriverConfiguration() {
