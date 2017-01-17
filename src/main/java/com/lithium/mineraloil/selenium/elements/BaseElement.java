@@ -11,12 +11,8 @@ public class BaseElement implements Element<BaseElement> {
     @Delegate
     private final ElementImpl<BaseElement> elementImpl;
 
-    public BaseElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public BaseElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public BaseElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
 }

@@ -9,12 +9,8 @@ public class RadioElement implements Element {
     @Delegate(excludes = {RadioSelection.class})
     private final ElementImpl<RadioElement> elementImpl;
 
-    public RadioElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public RadioElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public RadioElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     private interface RadioSelection {

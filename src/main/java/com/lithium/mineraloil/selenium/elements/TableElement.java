@@ -20,12 +20,8 @@ public class TableElement implements Element {
     @Delegate
     private final ElementImpl<TableElement> elementImpl;
 
-    public TableElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public TableElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public TableElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     public int size() {

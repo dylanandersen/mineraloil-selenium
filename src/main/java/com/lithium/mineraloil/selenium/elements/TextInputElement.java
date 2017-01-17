@@ -14,12 +14,8 @@ public class TextInputElement implements Element {
     @Delegate
     private final ElementImpl<TextInputElement> elementImpl;
 
-    public TextInputElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public TextInputElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public TextInputElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     public void clear() {

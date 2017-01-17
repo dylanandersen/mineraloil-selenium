@@ -7,12 +7,9 @@ public class LinkElement implements Element {
     @Delegate
     private final ElementImpl<LinkElement> elementImpl;
 
-    public LinkElement(By by) {
-        elementImpl = new ElementImpl(this, by);
+    public LinkElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
-    public LinkElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
-    }
 
 }

@@ -9,12 +9,8 @@ public class TableRowElement implements Element {
     @Delegate
     private final ElementImpl<TableRowElement> elementImpl;
 
-    public TableRowElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public TableRowElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public TableRowElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     public ElementList<BaseElement> getColumns() {

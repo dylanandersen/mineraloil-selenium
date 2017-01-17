@@ -12,12 +12,8 @@ public class SelectListElement implements Element, SelectList {
     @Delegate
     private final ElementImpl<SelectListElement> elementImpl;
 
-    public SelectListElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public SelectListElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public SelectListElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     @Override

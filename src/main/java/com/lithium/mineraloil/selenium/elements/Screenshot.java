@@ -16,18 +16,22 @@ import java.io.Writer;
 
 @Slf4j
 public class Screenshot {
+    private final String screenShotDirectory = getDirectory("screenshots");
+    private final String htmlScreenShotDirectory = getDirectory("html-screenshots");
+    private final Driver driver;
 
-    private static final String screenShotDirectory = getDirectory("screenshots");
-    private static final String htmlScreenShotDirectory = getDirectory("html-screenshots");
+    public Screenshot(Driver driver) {
+        this.driver = driver;
+    }
 
-    public static void takeScreenshot(String filename) {
+    public void takeScreenshot(String filename) {
         if (log.isDebugEnabled()) {
             takeFullDesktopScreenshot(filename);
         } else {
-            if (DriverManager.INSTANCE.isDriverStarted()) {
+            if (driver.isDriverStarted()) {
                 try {
                     filename +=  "_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".png";
-                    File scrFile = DriverManager.INSTANCE.takeScreenshot();
+                    File scrFile = driver.takeScreenshot();
                     log.info("Creating Screenshot: " + screenShotDirectory + filename);
                     FileUtils.copyFile(scrFile, new File(screenShotDirectory + filename));
                 } catch (IOException | UnreachableBrowserException e) {
@@ -39,7 +43,7 @@ public class Screenshot {
         }
     }
 
-    public static void takeFullDesktopScreenshot(String filename) {
+    public void takeFullDesktopScreenshot(String filename) {
         try {
             filename +=  "_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".png";
             BufferedImage img = getScreenAsBufferedImage();
@@ -53,8 +57,8 @@ public class Screenshot {
         }
     }
 
-    public static void takeHTMLScreenshot(String filename) {
-        if (!DriverManager.INSTANCE.isDriverStarted()) {
+    public void takeHTMLScreenshot(String filename) {
+        if (!driver.isDriverStarted()) {
             log.error("Webdriver not started. Unable to take html snapshot");
             return;
         }
@@ -68,7 +72,7 @@ public class Screenshot {
             writer = new BufferedWriter(
                     new OutputStreamWriter(
                             new FileOutputStream(htmlScreenShotDirectory + filename), "utf-8"));
-            writer.write(DriverManager.INSTANCE.getHtml());
+            writer.write(driver.getHtml());
         } catch (IOException ex) {
             log.info("Unable to write out current state of html");
         } finally {
