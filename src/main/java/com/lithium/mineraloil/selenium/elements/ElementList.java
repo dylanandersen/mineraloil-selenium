@@ -16,13 +16,15 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ElementList<T extends Element> extends AbstractList<T> {
     protected final By by;
+    private final Driver driver;
     private Class className;
     private Element<T> parentElement;
     private Element<T> iframeElement;
     private Element<T> hoverElement;
     private boolean autoScrollIntoView;
 
-    public ElementList(By by, Class className) {
+    public ElementList(Driver driver, By by, Class className) {
+        this.driver = driver;
         this.by = by;
         this.className = className;
     }
@@ -104,14 +106,18 @@ public class ElementList<T extends Element> extends AbstractList<T> {
             }
             throw new NoSuchElementException("Unable to locate element: " + parentElement.getBy());
         } else {
-            return DriverManager.INSTANCE.getDriver().findElements(by);
+            return driver.findElements(by);
         }
     }
 
     private void handlePossibleIFrame() {
         if (iframeElement == null) {
-            ElementImpl.switchFocusFromIFrame();
-        } else  {
+            try {
+                driver.switchTo().parentFrame();
+            } catch (Exception e) {
+                driver.switchTo().defaultContent();
+            }
+        } else {
             ((BaseElement) iframeElement).switchFocusToIFrame();
         }
     }

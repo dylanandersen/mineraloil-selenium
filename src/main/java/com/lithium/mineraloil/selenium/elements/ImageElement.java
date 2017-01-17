@@ -10,12 +10,8 @@ public class ImageElement implements Element {
     @Delegate
     private final ElementImpl<ImageElement> elementImpl;
 
-    public ImageElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public ImageElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public ImageElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     public String getImageSource() {

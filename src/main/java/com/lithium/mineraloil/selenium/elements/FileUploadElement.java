@@ -13,12 +13,8 @@ public class FileUploadElement implements Element {
     @Delegate
     private final ElementImpl<FileUploadElement> elementImpl;
 
-    public FileUploadElement(By by) {
-        elementImpl = new ElementImpl(this, by);
-    }
-
-    public FileUploadElement(By by, int index) {
-        elementImpl = new ElementImpl(this, by, index);
+    public FileUploadElement(Driver driver, By by) {
+        elementImpl = new ElementImpl(driver, this, by);
     }
 
     public void type(final String text) {
