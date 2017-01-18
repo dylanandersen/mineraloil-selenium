@@ -69,6 +69,10 @@ public class Driver {
         }
     }
 
+    public String toString() {
+        return getDriver().toString();
+    }
+
     public int getNumberOfDrivers() {
         return getDriverCount();
     }
@@ -252,5 +256,6 @@ public class Driver {
     public FileUploadElement createFileUploadElement(By by) {
         return new FileUploadElement(this, by);
     }
+
 
 }
