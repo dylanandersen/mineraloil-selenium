@@ -127,7 +127,7 @@ public class Screenshot {
         }
     }
 
-    private static BufferedImage getScreenAsBufferedImage() {
+    private BufferedImage getScreenAsBufferedImage() {
         BufferedImage img = null;
         try {
             Robot r;
@@ -141,7 +141,7 @@ public class Screenshot {
         return img;
     }
 
-    private static String getDirectory(String name) {
+    private String getDirectory(String name) {
         String screenshotDirectory = String.format("%s../%s/", ClassLoader.getSystemClassLoader().getSystemResource("").getPath(),name);
         File file = new File(screenshotDirectory);
         if (!file.exists()) file.mkdir();
