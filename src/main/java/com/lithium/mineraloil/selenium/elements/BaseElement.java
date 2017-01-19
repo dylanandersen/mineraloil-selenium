@@ -16,4 +16,20 @@ public class BaseElement implements Element<BaseElement> {
         elementImpl = new ElementImpl(driver, this, by);
     }
 
+    public BaseElement(Driver driver, By by, int index) {
+        this.driver = driver;
+        elementImpl = new ElementImpl(driver, this, by, index);
+    }
+
+    public BaseElement(Driver driver, Element parentElement, By by) {
+        this.driver = driver;
+        elementImpl = new ElementImpl(driver, this, parentElement, by);
+    }
+
+    public BaseElement(Driver driver, Element parentElement, By by, int index) {
+        this.driver = driver;
+        elementImpl = new ElementImpl(driver, this, parentElement, by, index);
+    }
+
+
 }
