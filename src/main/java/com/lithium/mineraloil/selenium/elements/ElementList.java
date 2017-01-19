@@ -54,7 +54,7 @@ public class ElementList<T extends Element> extends AbstractList<T> {
         String errorMessage = String.format("Unable to get %s item from collection of %s", index, className);
         try {
             if (hoverElement != null) hoverElement.hover();
-            return handlePossibleIFrameElement((T) className.getDeclaredConstructor(By.class, int.class).newInstance(by, index));
+            return handlePossibleIFrameElement((T) className.getDeclaredConstructor(Driver.class, By.class, int.class).newInstance(driver, by, index));
         } catch (InstantiationException e) {
             throw new ElementListException(errorMessage);
         } catch (IllegalAccessException e) {
@@ -98,11 +98,7 @@ public class ElementList<T extends Element> extends AbstractList<T> {
 
     private void handlePossibleIFrame() {
         if (iframeElement == null) {
-            try {
-                driver.switchTo().parentFrame();
-            } catch (Exception e) {
-                driver.switchTo().defaultContent();
-            }
+            driver.switchTo().defaultContent();
         } else {
             ((BaseElement) iframeElement).switchFocusToIFrame();
         }
