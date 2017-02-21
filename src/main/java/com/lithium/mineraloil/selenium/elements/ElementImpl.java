@@ -1,7 +1,6 @@
 package com.lithium.mineraloil.selenium.elements;
 
 import com.jayway.awaitility.core.ConditionTimeoutException;
-import com.thoughtworks.selenium.SeleniumException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +69,7 @@ class ElementImpl<T extends Element> implements Element<T> {
                 if (element != null) {
                     return element;
                 }
-            } catch (SeleniumException e) {
+            } catch (WebDriverException e) {
                 //ignore and retry
                 retries++;
             }
@@ -132,12 +131,14 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Override
     public void click() {
+        waitUntilDisplayed();
         locateElement(Waiter.DISPLAY_WAIT_S, SECONDS).click();
         DriverManager.INSTANCE.waitForPageLoad();
     }
 
     @Override
     public void doubleClick() {
+        waitUntilDisplayed();
         DriverManager.INSTANCE.getActions().doubleClick(locateElement());
         DriverManager.INSTANCE.waitForPageLoad();
     }
@@ -240,6 +241,7 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Override
     public void hover() {
+        waitUntilDisplayed();
         try {
             Waiter.await().until(() -> {
                 try {
@@ -257,11 +259,13 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Override
     public void sendKeys(final Keys... keys) {
+        waitUntilDisplayed();
         locateElement(Waiter.DISPLAY_WAIT_S, SECONDS).sendKeys(keys);
     }
 
     @Override
     public boolean isSelected() {
+        waitUntilDisplayed();
         return locateElement(Waiter.DISPLAY_WAIT_S, SECONDS).isSelected();
     }
 
@@ -378,15 +382,18 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Override
     public boolean isFocused() {
+        waitUntilDisplayed();
         return DriverManager.INSTANCE.switchTo().activeElement().equals(locateElement(Waiter.DISPLAY_WAIT_S, SECONDS));
     }
 
     @Override
     public void focus() {
+        waitUntilDisplayed();
         DriverManager.INSTANCE.getActions().moveToElement(locateElement(Waiter.DISPLAY_WAIT_S, SECONDS)).perform();
     }
 
     public void flash() {
+        waitUntilDisplayed();
         final WebElement element = locateElement(Waiter.DISPLAY_WAIT_S, SECONDS);
         String elementColor = (String) DriverManager.INSTANCE.executeScript("arguments[0].style.backgroundColor", element);
         elementColor = (elementColor == null) ? "" : elementColor;
