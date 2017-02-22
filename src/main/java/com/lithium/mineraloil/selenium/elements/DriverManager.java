@@ -3,7 +3,6 @@ package com.lithium.mineraloil.selenium.elements;
 import com.google.common.base.Preconditions;
 import com.jayway.awaitility.core.ConditionTimeoutException;
 import com.lithium.mineraloil.selenium.browsers.PageLoadWaiter;
-import com.lithium.mineraloil.selenium.exceptions.DriverNotFoundException;
 import com.lithium.mineraloil.selenium.exceptions.PageLoadWaiterTimeoutException;
 import lombok.Setter;
 import lombok.experimental.Delegate;
@@ -88,7 +87,7 @@ public enum DriverManager {
 
     // package private so we don't leak this outside of the abstraction
     WebDriver getDriver() {
-        if (!isDriverStarted()) throw new DriverNotFoundException("Unable to locate a started WebDriver instance");
+        if (!isDriverStarted()) startDriver();
         return drivers.get(activeDriverIndex).getDriver();
     }
 
