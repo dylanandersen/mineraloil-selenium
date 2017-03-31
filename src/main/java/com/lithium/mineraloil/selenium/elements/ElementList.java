@@ -71,7 +71,7 @@ public class ElementList<T extends Element> extends AbstractList<T> {
         }
     }
 
-    public ElementList<T> withIframe(Element iframeElement) {
+    public ElementList<T> withIFrame(Element iframeElement) {
         this.iframeElement = iframeElement;
         return this;
     }
