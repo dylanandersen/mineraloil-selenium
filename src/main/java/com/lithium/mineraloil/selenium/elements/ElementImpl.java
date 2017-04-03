@@ -380,13 +380,13 @@ class ElementImpl<T extends Element> implements Element<T> {
     }
 
     @Override
-    public TextInputElement createTextInputElement(By childBy) {
-        return new TextInputElement(driver, childBy).withParent(this);
+    public TextElement createTextElement(By childBy) {
+        return new TextElement(driver, childBy).withParent(this);
     }
 
     @Override
-    public ElementList<TextInputElement> createTextInputElements(By childBy) {
-        return new ElementList<TextInputElement>(driver, childBy, TextInputElement.class).withParent(this);
+    public ElementList<TextElement> createTextElements(By childBy) {
+        return new ElementList<TextElement>(driver, childBy, TextElement.class).withParent(this);
     }
 
     @Override

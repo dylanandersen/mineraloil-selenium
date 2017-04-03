@@ -53,7 +53,7 @@ If you want to manage this yourself, you can use DriverManager.switchto() and th
 Sometimes when running your tests, you need a separate browser independent of the session you have at the current moment.
 
 ```java
-DriverManager.INSTANCE.startDriver(); // By running startDriver() again after the initial startup, the focus will now be on the newly started browser
+DriverManager.INSTANCE.startDriver(); start
 DriverManager.INSTANCE.stopDriver(); // This will close the most recently created browser
 DriverManager.INSTANCE.stopAllDrivers(); //This will kill all the drivers
 ```
@@ -96,7 +96,7 @@ The table elements are more of a composite element that we found useful for hand
 
 You can chain method calls when creating elements. This is useful when you need to find an element relative to the position of another element. 
 
-`ElementFactory.createBaseElement(By.xpath("//div[@id='foo']).createTextInputElement(By.id("bar");`
+`ElementFactory.createBaseElement(By.xpath("//div[@id='foo']).createTextElement(By.id("bar");`
 
 ### Element lists
 

@@ -9,12 +9,12 @@ import org.openqa.selenium.WebElement;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class TextInputElement implements Element {
+public class TextElement implements Element {
 
     @Delegate
-    private final ElementImpl<TextInputElement> elementImpl;
+    private final ElementImpl<TextElement> elementImpl;
 
-    public TextInputElement(Driver driver, By by) {
+    public TextElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

@@ -185,6 +185,14 @@ public class Driver {
         return new ElementList<>(this, by, BaseElement.class);
     }
 
+    public ButtonElement createButtonElement(By by) {
+        return new ButtonElement(this, by);
+    }
+
+    public ElementList<ButtonElement> createButtonElements(By by) {
+        return new ElementList<>(this, by, ButtonElement.class);
+    }
+
     public RadioElement createRadioElement(By by) {
         return new RadioElement(this, by);
     }
@@ -209,12 +217,12 @@ public class Driver {
         return new ElementList<>(this, by, ImageElement.class);
     }
 
-    public TextInputElement createTextElement(By by) {
-        return new TextInputElement(this, by);
+    public TextElement createTextElement(By by) {
+        return new TextElement(this, by);
     }
 
-    public ElementList<TextInputElement> createTextElements(By by) {
-        return new ElementList<>(this, by, TextInputElement.class);
+    public ElementList<TextElement> createTextElements(By by) {
+        return new ElementList<>(this, by, TextElement.class);
     }
 
     public LinkElement createLinkElement(By by) {
