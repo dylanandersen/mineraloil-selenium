@@ -13,12 +13,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Screenshot {
 
     private static final String screenShotDirectory = getDirectory("screenshots");
     private static final String htmlScreenShotDirectory = getDirectory("html-screenshots");
+    private static final String consoleLogDirectory = getDirectory("console-log-screenshots");
 
     public static void takeScreenshot(String filename) {
         if (log.isDebugEnabled()) {
@@ -26,7 +29,7 @@ public class Screenshot {
         } else {
             if (DriverManager.INSTANCE.isDriverStarted()) {
                 try {
-                    filename +=  "_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".png";
+                    filename +=  "_" + Thread.currentThread().getId() + ".png";
                     File scrFile = DriverManager.INSTANCE.takeScreenshot();
                     log.info("Creating Screenshot: " + screenShotDirectory + filename);
                     FileUtils.copyFile(scrFile, new File(screenShotDirectory + filename));
@@ -41,7 +44,7 @@ public class Screenshot {
 
     public static void takeFullDesktopScreenshot(String filename) {
         try {
-            filename +=  "_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".png";
+            filename +=  "_" + Thread.currentThread().getId() + ".png";
             BufferedImage img = getScreenAsBufferedImage();
             File output = new File(filename);
             ImageIO.write(img, "png", output);
@@ -59,7 +62,7 @@ public class Screenshot {
             return;
         }
 
-        filename +=  "_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".html";
+        filename +=  "_" + Thread.currentThread().getId() + ".html";
 
         Writer writer = null;
         log.info("Capturing HTML snapshot: " + htmlScreenShotDirectory + filename);
@@ -71,6 +74,37 @@ public class Screenshot {
             writer.write(DriverManager.INSTANCE.getHtml());
         } catch (IOException ex) {
             log.info("Unable to write out current state of html");
+        } finally {
+            try {
+                writer.close();
+            } catch (Exception e) {
+                log.info("Unable to close writer");
+            }
+        }
+    }
+
+    public static void takeConsoleLogScreenshot(String filename){
+        if (!DriverManager.INSTANCE.isDriverStarted()){
+            log.error("Webdriver not started. Unable to take html snapshot");
+            return;
+        }
+
+        filename += "_" + System.currentTimeMillis() + "_" + Thread.currentThread().getId() + ".log";
+
+        Writer writer = null;
+        log.info("Capturing Console Log snapshot: " + consoleLogDirectory + filename);
+
+        try {
+            writer = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(consoleLogDirectory + filename), "utf-8"));
+            writer.write(DriverManager.INSTANCE.getConsoleLog()
+                                               .filter(Level.SEVERE)
+                                               .stream()
+                                               .map(logEntry -> logEntry.getMessage().concat("\n"))
+                                               .collect(Collectors.joining()));
+        } catch (IOException ex) {
+            log.info("Unable to write out current state of the console log");
         } finally {
             try {
                 writer.close();
