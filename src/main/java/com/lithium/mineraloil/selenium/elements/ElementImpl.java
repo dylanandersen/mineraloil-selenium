@@ -28,6 +28,7 @@ class ElementImpl<T extends Element> implements Element<T> {
     private int index = -1;
     private Element referenceElement;
     private boolean scrollIntoView = false;
+    private Driver driver;
 
     @Setter private Element iframeElement;
     @Setter private Element hoverElement;
@@ -38,24 +39,24 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     private static boolean autoHoverOnInput;
 
-    public ElementImpl(Element<T> referenceElement, By by) {
+    public ElementImpl(Driver driver, Element<T> referenceElement, By by) {
         this.referenceElement = referenceElement;
         this.by = by;
     }
 
-    public ElementImpl(Element<T> referenceElement, By by, int index) {
+    public ElementImpl(Driver driver, Element<T> referenceElement, By by, int index) {
         this.referenceElement = referenceElement;
         this.by = by;
         this.index = index;
     }
 
-    public ElementImpl(Element<T> referenceElement, Element parentElement, By by) {
+    public ElementImpl(Driver driver, Element<T> referenceElement, Element parentElement, By by) {
         this.referenceElement = referenceElement;
         this.parentElement = parentElement;
         this.by = by;
     }
 
-    public ElementImpl(Element<T> referenceElement, Element parentElement, By by, int index) {
+    public ElementImpl(Driver driver, Element<T> referenceElement, Element parentElement, By by, int index) {
         this.referenceElement = referenceElement;
         this.parentElement = parentElement;
         this.by = by;
@@ -89,13 +90,13 @@ class ElementImpl<T extends Element> implements Element<T> {
             }
         } else {
             if (index >= 0) {
-                List<WebElement> elements = DriverManager.INSTANCE.getDriver().findElements(by);
+                List<WebElement> elements = driver.findElements(by);
                 if (index > elements.size() - 1) {
                     throw new NoSuchElementException(String.format("Unable to locate an element at index: %s using %s", index, getBy()));
                 }
                 webElement = elements.get(index);
             } else {
-                webElement = DriverManager.INSTANCE.getDriver().findElement(by);
+                webElement = driver.findElement(by);
             }
         }
 
@@ -141,7 +142,7 @@ class ElementImpl<T extends Element> implements Element<T> {
 
         callSelenium(() -> {
             locateElement().click();
-            DriverManager.INSTANCE.waitForPageLoad();
+            driver.waitForPageLoad();
             return null;
         });
     }
@@ -153,8 +154,8 @@ class ElementImpl<T extends Element> implements Element<T> {
         autoHover();
 
         callSelenium(() -> {
-            DriverManager.INSTANCE.getActions().moveToElement(locateElement(), x, y).click().perform();
-            DriverManager.INSTANCE.waitForPageLoad();
+            driver.getActions().moveToElement(locateElement(), x, y).click().perform();
+            driver.waitForPageLoad();
             return null;
         });
     }
@@ -166,8 +167,8 @@ class ElementImpl<T extends Element> implements Element<T> {
         autoHover();
 
         callSelenium(() -> {
-            DriverManager.INSTANCE.getActions().doubleClick(locateElement());
-            DriverManager.INSTANCE.waitForPageLoad();
+            driver.getActions().doubleClick(locateElement());
+            driver.waitForPageLoad();
             return null;
         });
     }
@@ -261,7 +262,7 @@ class ElementImpl<T extends Element> implements Element<T> {
         try {
             await().until(() -> {
                 try {
-                    final Actions hoverHandler = DriverManager.INSTANCE.getActions();
+                    final Actions hoverHandler = driver.getActions();
                     hoverHandler.moveToElement(locateElement()).perform();
                     return true;
                 } catch (WebDriverException e) {
@@ -304,7 +305,7 @@ class ElementImpl<T extends Element> implements Element<T> {
         waitUntilDisplayed();
 
         return callSelenium(() -> {
-            return DriverManager.INSTANCE.switchTo().activeElement().equals(locateElement());
+            return driver.switchTo().activeElement().equals(locateElement());
         });
     }
 
@@ -313,7 +314,7 @@ class ElementImpl<T extends Element> implements Element<T> {
         waitUntilDisplayed();
 
         callSelenium(() -> {
-            DriverManager.INSTANCE.getActions().moveToElement(locateElement()).perform();
+            driver.getActions().moveToElement(locateElement()).perform();
             return null;
         });
     }
@@ -328,130 +329,130 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Override
     public BaseElement createBaseElement(By childBy) {
-        return new BaseElement(childBy).withParent(this);
+        return new BaseElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<BaseElement> createBaseElements(By childBy) {
-        return new ElementList<BaseElement>(childBy, BaseElement.class).withParent(this);
+        return new ElementList<BaseElement>(driver, childBy, BaseElement.class).withParent(this);
     }
 
     @Override
     public ButtonElement createButtonElement(By childBy) {
-        return new ButtonElement(childBy).withParent(this);
+        return new ButtonElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<ButtonElement> createButtonElements(By childBy) {
-        return new ElementList<ButtonElement>(childBy, ButtonElement.class).withParent(this);
+        return new ElementList<ButtonElement>(driver, childBy, ButtonElement.class).withParent(this);
     }
 
     @Override
     public CheckboxElement createCheckboxElement(By childBy) {
-        return new CheckboxElement(childBy).withParent(this);
+        return new CheckboxElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<CheckboxElement> createCheckboxElements(By childBy) {
-        return new ElementList<CheckboxElement>(childBy, CheckboxElement.class).withParent(this);
+        return new ElementList<CheckboxElement>(driver, childBy, CheckboxElement.class).withParent(this);
     }
 
     @Override
     public RadioElement createRadioElement(By childBy) {
-        return new RadioElement(childBy).withParent(this);
+        return new RadioElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<RadioElement> createRadioElements(By childBy) {
-        return new ElementList<RadioElement>(childBy, RadioElement.class).withParent(this);
+        return new ElementList<RadioElement>(driver, childBy, RadioElement.class).withParent(this);
     }
 
     @Override
     public ImageElement createImageElement(By childBy) {
-        return new ImageElement(childBy).withParent(this);
+        return new ImageElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<ImageElement> createImageElements(By childBy) {
-        return new ElementList<ImageElement>(childBy, ImageElement.class).withParent(this);
+        return new ElementList<ImageElement>(driver, childBy, ImageElement.class).withParent(this);
     }
 
     @Override
     public LinkElement createLinkElement(By childBy) {
-        return new LinkElement(childBy).withParent(this);
+        return new LinkElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<LinkElement> createLinkElements(By childBy) {
-        return new ElementList<LinkElement>(childBy, LinkElement.class).withParent(this);
+        return new ElementList<LinkElement>(driver, childBy, LinkElement.class).withParent(this);
     }
 
     @Override
     public TextInputElement createTextInputElement(By childBy) {
-        return new TextInputElement(childBy).withParent(this);
+        return new TextInputElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<TextInputElement> createTextInputElements(By childBy) {
-        return new ElementList<TextInputElement>(childBy, TextInputElement.class).withParent(this);
+        return new ElementList<TextInputElement>(driver, childBy, TextInputElement.class).withParent(this);
     }
 
     @Override
     public SelectListElement createSelectListElement(By by) {
-        return new SelectListElement(by).withParent(this);
+        return new SelectListElement(driver, by).withParent(this);
     }
 
     @Override
     public ElementList<SelectListElement> createSelectListElements(By by) {
-        return new ElementList<SelectListElement>(by, SelectListElement.class).withParent(this);
+        return new ElementList<SelectListElement>(driver, by, SelectListElement.class).withParent(this);
     }
 
     @Override
     public FileUploadElement createFileUploadElement(By childBy) {
-        return new FileUploadElement(childBy).withParent(this);
+        return new FileUploadElement(driver, childBy).withParent(this);
     }
 
     @Override
     public TableElement createTableElement(By childBy) {
-        return new TableElement(childBy).withParent(this);
+        return new TableElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<TableElement> createTableElements(By childBy) {
-        return new ElementList<TableElement>(childBy, TableElement.class).withParent(this);
+        return new ElementList<TableElement>(driver, childBy, TableElement.class).withParent(this);
     }
 
     @Override
     public TableRowElement createTableRowElement(By childBy) {
-        return new TableRowElement(childBy).withParent(this);
+        return new TableRowElement(driver, childBy).withParent(this);
     }
 
     @Override
     public ElementList<TableRowElement> createTableRowElements(By childBy) {
-        return new ElementList<TableRowElement>(childBy, TableRowElement.class).withParent(this);
+        return new ElementList<TableRowElement>(driver, childBy, TableRowElement.class).withParent(this);
     }
 
     public void flash() {
         waitUntilDisplayed();
         final WebElement element = locateElement();
-        String elementColor = (String) DriverManager.INSTANCE.executeScript("arguments[0].style.backgroundColor", element);
+        String elementColor = (String) driver.executeScript("arguments[0].style.backgroundColor", element);
         elementColor = (elementColor == null) ? "" : elementColor;
         for (int i = 0; i < 20; i++) {
             String bgColor = (i % 2 == 0) ? "red" : elementColor;
-            DriverManager.INSTANCE.executeScript(String.format("arguments[0].style.backgroundColor = '%s'", bgColor), element);
+            driver.executeScript(String.format("arguments[0].style.backgroundColor = '%s'", bgColor), element);
         }
-        DriverManager.INSTANCE.executeScript("arguments[0].style.backgroundColor = arguments[1]", element, elementColor);
+        driver.executeScript("arguments[0].style.backgroundColor = arguments[1]", element, elementColor);
     }
 
     public void switchFocusToIFrame() {
-        DriverManager.INSTANCE.switchTo().frame(locateElement());
+        driver.switchTo().frame(locateElement());
     }
 
-    public static void switchFocusFromIFrame() {
+    public void switchFocusFromIFrame() {
         try {
-            DriverManager.INSTANCE.switchTo().parentFrame();
+            driver.switchTo().parentFrame();
         } catch (Exception e) {
-            DriverManager.INSTANCE.switchTo().defaultContent();
+            driver.switchTo().defaultContent();
         }
     }
 
@@ -490,18 +491,18 @@ class ElementImpl<T extends Element> implements Element<T> {
         return (T) referenceElement;
     }
 
-    private static void dispatchJSEvent(WebElement element, String event, boolean eventParam1, boolean eventParam2) {
+    private void dispatchJSEvent(WebElement element, String event, boolean eventParam1, boolean eventParam2) {
         String cancelPreviousEventJS = "if (evObj && evObj.stopPropagation) { evObj.stopPropagation(); }";
         String dispatchEventJS = String.format("var evObj = document.createEvent('Event'); evObj.initEvent('%s', arguments[1], arguments[2]); arguments[0].dispatchEvent(evObj);",
                                                event);
-        DriverManager.INSTANCE.executeScript(cancelPreviousEventJS + " " + dispatchEventJS,
+        driver.executeScript(cancelPreviousEventJS + " " + dispatchEventJS,
                                              element,
                                              eventParam1,
                                              eventParam2);
     }
 
     private void scrollElement(WebElement webElement) {
-        DriverManager.INSTANCE.executeScript("arguments[0].scrollIntoView(true);", webElement);
+        driver.executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
     /*
