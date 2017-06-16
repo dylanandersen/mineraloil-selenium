@@ -40,23 +40,27 @@ class ElementImpl<T extends Element> implements Element<T> {
     private static boolean autoHoverOnInput;
 
     public ElementImpl(Driver driver, Element<T> referenceElement, By by) {
+        this.driver = driver;
         this.referenceElement = referenceElement;
         this.by = by;
     }
 
     public ElementImpl(Driver driver, Element<T> referenceElement, By by, int index) {
+        this.driver = driver;
         this.referenceElement = referenceElement;
         this.by = by;
         this.index = index;
     }
 
     public ElementImpl(Driver driver, Element<T> referenceElement, Element parentElement, By by) {
+        this.driver = driver;
         this.referenceElement = referenceElement;
         this.parentElement = parentElement;
         this.by = by;
     }
 
     public ElementImpl(Driver driver, Element<T> referenceElement, Element parentElement, By by, int index) {
+        this.driver = driver;
         this.referenceElement = referenceElement;
         this.parentElement = parentElement;
         this.by = by;
