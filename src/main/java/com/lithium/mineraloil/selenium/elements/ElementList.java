@@ -23,7 +23,7 @@ public class ElementList<T extends Element> extends AbstractList<T> {
     private Element<T> hoverElement;
     private boolean autoScrollIntoView;
 
-    public ElementList(Driver driver, By by, Class className) {
+    ElementList(Driver driver, By by, Class className) {
         this.driver = driver;
         this.by = by;
         this.className = className;
