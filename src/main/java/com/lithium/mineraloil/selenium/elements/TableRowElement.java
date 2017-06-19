@@ -9,7 +9,7 @@ public class TableRowElement implements Element {
     @Delegate
     private final ElementImpl<TableRowElement> elementImpl;
 
-    public TableRowElement(Driver driver, By by) {
+    TableRowElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

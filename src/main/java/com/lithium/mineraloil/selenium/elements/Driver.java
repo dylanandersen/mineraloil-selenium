@@ -69,6 +69,10 @@ public class Driver {
         }
     }
 
+    public void autoHoverOnInput() {
+        ElementImpl.setAutoHoverOnInput(true);
+    }
+
     public String toString() {
         return getDriver().toString();
     }
@@ -176,7 +180,6 @@ public class Driver {
         return getDriver().findElement(by);
     }
 
-
     public BaseElement createBaseElement(By by) {
         return new BaseElement(this, by);
     }
@@ -217,12 +220,12 @@ public class Driver {
         return new ElementList<>(this, by, ImageElement.class);
     }
 
-    public TextInputElement createTextElement(By by) {
-        return new TextInputElement(this, by);
+    public TextElement createTextElement(By by) {
+        return new TextElement(this, by);
     }
 
-    public ElementList<TextInputElement> createTextElements(By by) {
-        return new ElementList<>(this, by, TextInputElement.class);
+    public ElementList<TextElement> createTextElements(By by) {
+        return new ElementList<>(this, by, TextElement.class);
     }
 
     public LinkElement createLinkElement(By by) {
@@ -255,10 +258,6 @@ public class Driver {
 
     public ElementList<SelectListElement> createSelectListElements(By by) {
         return new ElementList<>(this, by, SelectListElement.class);
-    }
-
-    public LabelElement createLabelElement(Element referenceElement) {
-        return new LabelElement(this, referenceElement);
     }
 
     public FileUploadElement createFileUploadElement(By by) {

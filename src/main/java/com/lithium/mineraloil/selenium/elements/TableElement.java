@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
 public class TableElement implements Element {
     private ElementList<TableRowElement> rows;
     private TableRowElement header;
@@ -20,7 +19,7 @@ public class TableElement implements Element {
     @Delegate
     private final ElementImpl<TableElement> elementImpl;
 
-    public TableElement(Driver driver, By by) {
+    TableElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

@@ -13,7 +13,7 @@ public class FileUploadElement implements Element {
     @Delegate
     private final ElementImpl<FileUploadElement> elementImpl;
 
-    public FileUploadElement(Driver driver, By by) {
+    FileUploadElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

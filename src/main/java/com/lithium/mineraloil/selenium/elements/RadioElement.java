@@ -9,7 +9,7 @@ public class RadioElement implements Element {
     @Delegate(excludes = {RadioSelection.class})
     private final ElementImpl<RadioElement> elementImpl;
 
-    public RadioElement(Driver driver, By by) {
+    RadioElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

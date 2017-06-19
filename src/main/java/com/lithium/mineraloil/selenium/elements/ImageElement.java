@@ -10,7 +10,7 @@ public class ImageElement implements Element {
     @Delegate
     private final ElementImpl<ImageElement> elementImpl;
 
-    public ImageElement(Driver driver, By by) {
+    ImageElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

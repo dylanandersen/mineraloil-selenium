@@ -16,7 +16,7 @@ public class SelectListElement implements Element, SelectList {
     @Delegate
     private final ElementImpl<SelectListElement> elementImpl;
 
-    public SelectListElement(Driver driver, By by) {
+    SelectListElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 

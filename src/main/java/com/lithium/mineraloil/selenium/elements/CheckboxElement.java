@@ -8,7 +8,7 @@ public class CheckboxElement implements Element {
     @Delegate
     private final ElementImpl<CheckboxElement> elementImpl;
 
-    public CheckboxElement(Driver driver, By by) {
+    CheckboxElement(Driver driver, By by) {
         elementImpl = new ElementImpl(driver, this, by);
     }
 
