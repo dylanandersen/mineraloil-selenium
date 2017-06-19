@@ -185,6 +185,14 @@ public class Driver {
         return new ElementList<>(this, by, BaseElement.class);
     }
 
+    public ButtonElement createButtonElement(By by) {
+        return new ButtonElement(this, by);
+    }
+
+    public ElementList<ButtonElement> createButtonElements(By by) {
+        return new ElementList<>(this, by, BaseElement.class);
+    }
+
     public RadioElement createRadioElement(By by) {
         return new RadioElement(this, by);
     }
@@ -256,6 +264,4 @@ public class Driver {
     public FileUploadElement createFileUploadElement(By by) {
         return new FileUploadElement(this, by);
     }
-
-
 }

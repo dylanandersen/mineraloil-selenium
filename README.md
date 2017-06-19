@@ -26,9 +26,9 @@ public static DriverConfiguration getDriverConfiguration(BrowserType browserType
 }
 
 public static void startBrowser() {
-    if (!DriverManager.INSTANCE.isDriverStarted()) {
-        DriverManager.INSTANCE.setDriverConfiguration(getDriverConfiguration(browserType));
-        DriverManager.INSTANCE.startDriver();
+    if (!ThreadManager.INSTANCE.getDriver().isDriverStarted()) {
+        ThreadManager.INSTANCE.getDriver().setDriverConfiguration(getDriverConfiguration(browserType));
+        ThreadManager.INSTANCE.getDriver().startDriver();
     }
 }
 ```
@@ -41,9 +41,9 @@ There are cases where you want to open another window or some action in your UI 
 
 ```java
 somebutton.click();             // opens a new tab or window or could be code to start a second browser session
-DriverManager.INSTANCE.switchWindow();   // switchs focus to the last window opened
+ThreadManager.INSTANCE.getDriver().switchWindow();   // switchs focus to the last window opened
 // do something with that window
-DriverManager.INSTANCE.closeWindow();    // closes the current window and switches focus to the last opened window
+ThreadManager.INSTANCE.getDriver().closeWindow();    // closes the current window and switches focus to the last opened window
 ```
 
 If you want to manage this yourself, you can use DriverManager.switchto() and then use whatever selenium provides to change window focus.
@@ -53,14 +53,14 @@ If you want to manage this yourself, you can use DriverManager.switchto() and th
 Sometimes when running your tests, you need a separate browser independent of the session you have at the current moment.
 
 ```java
-DriverManager.INSTANCE.startDriver(); // By running startDriver() again after the initial startup, the focus will now be on the newly started browser
-DriverManager.INSTANCE.stopDriver(); // This will close the most recently created browser
-DriverManager.INSTANCE.stopAllDrivers(); //This will kill all the drivers
+ThreadManager.INSTANCE.getDriver().startDriver(); // By running startDriver() again after the initial startup, the focus will now be on the newly started browser
+ThreadManager.INSTANCE.getDriver().stopDriver(); // This will close the most recently created browser
+ThreadManager.INSTANCE.getDriver().stopAllDrivers(); //This will kill all the drivers
 ```
 
 ## Web Elements
 
-We've followed a "wrapallthethings!" paradigm - all selenium elements are created using an ElementFactory. The biggest advantage here is that we're able to make waiting for elements to display the default behavior. So in general, you shouldn't have to add any wait conditions to your code when you want to interact with an element, presuming it shows up within 20s. Of course if the element is present sooner, it'll click it as soon as that element is displayed. 
+We've followed a "wrapallthethings!" paradigm - all selenium elements are created using an driver. The biggest advantage here is that we're able to make waiting for elements to display the default behavior. So in general, you shouldn't have to add any wait conditions to your code when you want to interact with an element, presuming it shows up within 20s. Of course if the element is present sooner, it'll click it as soon as that element is displayed. 
 
 The other nice thing is that if the library sees one of these exceptions, it will automatically retry locating the element until the timeout is hit or the element is found:
 
@@ -76,19 +76,19 @@ There are of course business rules which may require you to wait for something o
 
 ### Creating an element
 
-In your page class you can create an elements using the ElementFactory. Ideally, these are really simple and only return elements like this:
+In your page class you can create an elements using the driver. Ideally, these are really simple and only return elements like this:
 
 ```java
 public SelectListElement getAccountSelectElement() {
-    return ElementFactory.createSelectListElement(By.id("foo"));
+    return driver.createSelectListElement(By.id("foo"));
 }
 ```
 
-The ElementFactory#createSelectListElement takes in a By and returns a SelectListElement. Then you can then use the element like you would any other selenium web element and call #select, #getSelectedOption, etc. 
+The driver#createSelectListElement takes in a By and returns a SelectListElement. Then you can then use the element like you would any other selenium web element and call #select, #getSelectedOption, etc. 
 
 There's support for creating button, text field, checkbox, image, label, link, radio, selectlist, file upload and table elements. 
 
-To work with any generic element (div, span, etc) you should use ElementFactory#createBaseElement(). 
+To work with any generic element (div, span, etc) you should use driver#createBaseElement(). 
 
 The table elements are more of a composite element that we found useful for handling a legacy application that made extensive use of tables. You can also implement your own if there's something that behaves like a web element but might be made up of other elements or non-standard elements. The GWT select list, for example, is a clickable set of divs and we were able to implement it by extending this library's SelectList. 
 
@@ -96,21 +96,21 @@ The table elements are more of a composite element that we found useful for hand
 
 You can chain method calls when creating elements. This is useful when you need to find an element relative to the position of another element. 
 
-`ElementFactory.createBaseElement(By.xpath("//div[@id='foo']).createTextInputElement(By.id("bar");`
+`driver.createBaseElement(By.xpath("//div[@id='foo']).createTextElement(By.id("bar");`
 
 ### Element lists
 
-You can interact with a list of elements similar to webdriver#findElements. To do this, simply pluralize the ElementFactory call: 
+You can interact with a list of elements similar to webdriver#findElements. To do this, simply pluralize the driver call: 
 
 ```java
 public List<BaseElement> getSearchResults() {
-    return ElementFactory.createBaseElements(By.id("foo"));
+    return driver.createBaseElements(By.id("foo"));
 }
 ```
 
 You can also get lists of elements relative to another element: 
 
-`ElementFactory.createBaseElement(By.id("foo")).createBaseElements(By.id("bar"));`
+`driver.createBaseElement(By.id("foo")).createBaseElements(By.id("bar"));`
 
 ### IFrames
 
@@ -118,7 +118,7 @@ Supporting iframes only requires you to register the iframe locator. Each time y
 
 ```java
 public TextInputElement getTextFieldElement() {
-    return ElementFactory.createTextInputElement(By.xpath("//body[contains(@class,'frameClass')]"))
+    return driver.createTextElement(By.xpath("//body[contains(@class,'frameClass')]"))
                          .registerIFrame(getIFrameElement());
 }
 
@@ -147,7 +147,7 @@ DriverManager.addPageLoadWaiter(new PageLoadWaiter() {
             @Override
             public boolean isSatisfied() {
                 // say we want to make sure there's no spinning whirlygig on the page
-                return !ElementFactory.createBaseElement(By.xpath("path-to-whirlygig")).isDisplayed();
+                return !driver.createBaseElement(By.xpath("path-to-whirlygig")).isDisplayed();
             }
         });
 ```
@@ -172,4 +172,4 @@ One of the issues with JUnit out of the box is that @Before, @Test and @After ar
 
 The screenshots are, by default, automatically placed in the project /target/screenshots and /target/html-screenshots. 
 
-If you pass a file name that is of the Java class syntax, i.e. ```Screenshot.takeScreenshot("mytestfolder.TestClass.testMethod")``` or ```Screenshot.takeScreenshot("mytestfolder.TestClass")```, the project /target/screenshots directory will automatically generate subfolders /mytestfolder/TestClass/ with screenshots named either after the test method in the string (i.e. ```testMethod_132532.png```), or the test class (i.e. ```testclass_1230432.png```) if the test method is not appended in the file name.
+If you pass a file name that is of the Java class syntax, i.e. ```new Screenshot(driver).takeScreenshot("mytestfolder.TestClass.testMethod")``` or ```new Screenshot(driver).takeScreenshot("mytestfolder.TestClass")```, the project /target/screenshots directory will automatically generate subfolders /mytestfolder/TestClass/ with screenshots named either after the test method in the string (i.e. ```testMethod_132532.png```), or the test class (i.e. ```testclass_1230432.png```) if the test method is not appended in the file name.

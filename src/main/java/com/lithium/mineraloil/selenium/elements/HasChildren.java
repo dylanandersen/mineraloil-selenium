@@ -28,9 +28,9 @@ public interface HasChildren {
 
     ElementList<LinkElement> createLinkElements(By by);
 
-    TextInputElement createTextInputElement(By by);
+    TextInputElement createTextElement(By by);
 
-    ElementList<TextInputElement> createTextInputElements(By by);
+    ElementList<TextInputElement> createTextElements(By by);
 
     SelectListElement createSelectListElement(By by);
 

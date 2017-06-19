@@ -24,7 +24,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Slf4j
-class ElementImpl<T extends Element> implements Element<T> {
+public class ElementImpl<T extends Element> implements Element<T> {
     private int index = -1;
     private Element referenceElement;
     private boolean scrollIntoView = false;
@@ -392,12 +392,12 @@ class ElementImpl<T extends Element> implements Element<T> {
     }
 
     @Override
-    public TextInputElement createTextInputElement(By childBy) {
+    public TextInputElement createTextElement(By childBy) {
         return new TextInputElement(driver, childBy).withParent(this);
     }
 
     @Override
-    public ElementList<TextInputElement> createTextInputElements(By childBy) {
+    public ElementList<TextInputElement> createTextElements(By childBy) {
         return new ElementList<TextInputElement>(driver, childBy, TextInputElement.class).withParent(this);
     }
 
