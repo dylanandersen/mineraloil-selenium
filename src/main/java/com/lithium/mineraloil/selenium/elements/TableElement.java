@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,14 +14,31 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TableElement implements Element {
-    private ElementList<TableRowElement> rows;
+    private List<TableRowElement> rows;
     private TableRowElement header;
 
     @Delegate
     private final ElementImpl<TableElement> elementImpl;
+    private final Driver driver;
 
     TableElement(Driver driver, By by) {
+        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
+    }
+
+    private TableElement(Driver driver, WebElement webElement) {
+        this.driver = driver;
+        elementImpl = new ElementImpl(driver, this, webElement);
+    }
+
+    public List<TableElement> toList() {
+        return locateElements().stream()
+                               .map(element -> new TableElement(driver, element)
+                                       .withParent(getParentElement())
+                                       .withIframe(getIframeElement())
+                                       .withHover(getHoverElement())
+                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .collect(Collectors.toList());
     }
 
     public int size() {
@@ -34,9 +52,9 @@ public class TableElement implements Element {
         return header;
     }
 
-    public ElementList<TableRowElement> getRows() {
+    public List<TableRowElement> getRows() {
         if (rows == null) {
-            rows = createTableRowElements(By.tagName("tr"));
+            rows = createTableRowElement(By.tagName("tr")).toList();
         }
         return rows;
     }

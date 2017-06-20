@@ -4,6 +4,8 @@ import com.lithium.mineraloil.selenium.helpers.BaseTest;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BaseElementTest extends BaseTest {
@@ -29,6 +31,12 @@ public class BaseElementTest extends BaseTest {
         BaseElement parent = driver.createBaseElement(By.xpath("//div[@id='nested_div']"));
         BaseElement child = parent.createBaseElement(By.xpath("//div[@class='duplicate_class']"));
         assertThat(child.getText()).isEqualTo("Nested Value With Shared Class");
+    }
+
+    @Test
+    public void elementCollection() {
+        List<BaseElement> elements = driver.createBaseElement(By.xpath("//div")).toList();
+        assertThat(elements.size()).isGreaterThan(0);
     }
 
     @Test

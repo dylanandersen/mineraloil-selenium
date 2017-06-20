@@ -184,56 +184,28 @@ public class Driver {
         return new BaseElement(this, by);
     }
 
-    public ElementList<BaseElement> createBaseElements(By by) {
-        return new ElementList<>(this, by, BaseElement.class);
-    }
-
     public ButtonElement createButtonElement(By by) {
         return new ButtonElement(this, by);
-    }
-
-    public ElementList<ButtonElement> createButtonElements(By by) {
-        return new ElementList<>(this, by, BaseElement.class);
     }
 
     public RadioElement createRadioElement(By by) {
         return new RadioElement(this, by);
     }
 
-    public ElementList<RadioElement> createRadioElements(By by) {
-        return new ElementList<>(this, by, RadioElement.class);
-    }
-
     public CheckboxElement createCheckboxElement(By by) {
         return new CheckboxElement(this, by);
-    }
-
-    public ElementList<CheckboxElement> createCheckboxElements(By by) {
-        return new ElementList<>(this, by, CheckboxElement.class);
     }
 
     public ImageElement createImageElement(By by) {
         return new ImageElement(this, by);
     }
 
-    public ElementList<ImageElement> createImageElements(By by) {
-        return new ElementList<>(this, by, ImageElement.class);
-    }
-
     public TextElement createTextElement(By by) {
         return new TextElement(this, by);
     }
 
-    public ElementList<TextElement> createTextElements(By by) {
-        return new ElementList<>(this, by, TextElement.class);
-    }
-
     public LinkElement createLinkElement(By by) {
         return new LinkElement(this, by);
-    }
-
-    public ElementList<LinkElement> createLinkElements(By by) {
-        return new ElementList<>(this, by, LinkElement.class);
     }
 
     public SelectListElement createSelectListElement(By by) {
@@ -244,20 +216,8 @@ public class Driver {
         return new TableElement(this, by);
     }
 
-    public ElementList<TableElement> createTableElements(By by) {
-        return new ElementList<>(this, by, TableElement.class);
-    }
-
     public TableRowElement createTableRowElement(By by) {
         return new TableRowElement(this, by);
-    }
-
-    public ElementList<TableRowElement> createTableRowElements(By by) {
-        return new ElementList<>(this, by, TableRowElement.class);
-    }
-
-    public ElementList<SelectListElement> createSelectListElements(By by) {
-        return new ElementList<>(this, by, SelectListElement.class);
     }
 
     public FileUploadElement createFileUploadElement(By by) {

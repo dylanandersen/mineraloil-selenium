@@ -4,6 +4,7 @@ import lombok.experimental.Delegate;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.time.Instant;
@@ -15,9 +16,26 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class SelectListElement implements Element, SelectList {
     @Delegate
     private final ElementImpl<SelectListElement> elementImpl;
+    private final Driver driver;
 
     SelectListElement(Driver driver, By by) {
+        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
+    }
+
+    private SelectListElement(Driver driver, WebElement webElement) {
+        this.driver = driver;
+        elementImpl = new ElementImpl(driver, this, webElement);
+    }
+
+    public List<SelectListElement> toList() {
+        return locateElements().stream()
+                               .map(element -> new SelectListElement(driver, element)
+                                       .withParent(getParentElement())
+                                       .withIframe(getIframeElement())
+                                       .withHover(getHoverElement())
+                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .collect(Collectors.toList());
     }
 
     @Override

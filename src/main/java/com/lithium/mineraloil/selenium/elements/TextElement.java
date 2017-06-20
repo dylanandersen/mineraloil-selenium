@@ -7,8 +7,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -16,9 +19,26 @@ public class TextElement implements Element {
 
     @Delegate
     private final ElementImpl<TextElement> elementImpl;
+    private final Driver driver;
 
     TextElement(Driver driver, By by) {
+        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
+    }
+
+    TextElement(Driver driver, WebElement webElement) {
+        this.driver = driver;
+        elementImpl = new ElementImpl(driver, this, webElement);
+    }
+
+    public List<TextElement> toList() {
+        return locateElements().stream()
+                               .map(element -> new TextElement(driver, element)
+                                       .withParent(getParentElement())
+                                       .withIframe(getIframeElement())
+                                       .withHover(getHoverElement())
+                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .collect(Collectors.toList());
     }
 
     public void clear() {
