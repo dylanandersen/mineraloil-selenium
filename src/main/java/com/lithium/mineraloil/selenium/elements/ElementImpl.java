@@ -13,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -155,7 +156,9 @@ class ElementImpl<T extends Element> implements Element<T> {
                 Throwables.propagate(e);
             }
         }
-        throw new NoSuchElementException(exception.getMessage());
+
+        // no elements found so return an empty list
+        return new ArrayList<>();
     }
 
     public static boolean getAutoHoverOnInput() {
