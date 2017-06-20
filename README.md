@@ -26,9 +26,10 @@ public static DriverConfiguration getDriverConfiguration(BrowserType browserType
 }
 
 public static void startBrowser() {
-    if (!ThreadManager.INSTANCE.getDriver().isDriverStarted()) {
-        ThreadManager.INSTANCE.getDriver().setDriverConfiguration(getDriverConfiguration(browserType));
-        ThreadManager.INSTANCE.getDriver().startDriver();
+    Driver driver = new Driver();
+    if (!driver.isDriverStarted()) {
+        driver.setDriverConfiguration(getDriverConfiguration(browserType));
+        driver.startDriver();
     }
 }
 ```
@@ -41,9 +42,9 @@ There are cases where you want to open another window or some action in your UI 
 
 ```java
 somebutton.click();             // opens a new tab or window or could be code to start a second browser session
-ThreadManager.INSTANCE.getDriver().switchWindow();   // switchs focus to the last window opened
+driver.switchWindow();   // switchs focus to the last window opened
 // do something with that window
-ThreadManager.INSTANCE.getDriver().closeWindow();    // closes the current window and switches focus to the last opened window
+driver.closeWindow();    // closes the current window and switches focus to the last opened window
 ```
 
 If you want to manage this yourself, you can use DriverManager.switchto() and then use whatever selenium provides to change window focus.
@@ -53,9 +54,9 @@ If you want to manage this yourself, you can use DriverManager.switchto() and th
 Sometimes when running your tests, you need a separate browser independent of the session you have at the current moment.
 
 ```java
-ThreadManager.INSTANCE.getDriver().startDriver(); // By running startDriver() again after the initial startup, the focus will now be on the newly started browser
-ThreadManager.INSTANCE.getDriver().stopDriver(); // This will close the most recently created browser
-ThreadManager.INSTANCE.getDriver().stopAllDrivers(); //This will kill all the drivers
+driver.startDriver(); // By running startDriver() again after the initial startup, the focus will now be on the newly started browser
+driver.stopDriver(); // This will close the most recently created browser
+driver.stop(); //This will kill all the drivers
 ```
 
 ## Web Elements
