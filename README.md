@@ -25,16 +25,11 @@ public static DriverConfiguration getDriverConfiguration(BrowserType browserType
                               .build();
 }
 
-public static void startBrowser() {
-    Driver driver = new Driver();
-    if (!driver.isDriverStarted()) {
-        driver.setDriverConfiguration(getDriverConfiguration(browserType));
-        driver.startDriver();
-    }
-}
+Driver driver = new Driver();
+driver.setDriverConfiguration(getDriverConfiguration(browserType));
+driver.startDriver();
 ```
 
-The DriverManager also handles screenshots, executing javascript, getting text and html, methods to handle cookies, and all of the standard methods from the webdriver interface. This is to make sure that we don't have a leaky abstraction - one of the things we were careful *not* to expose, is access to the WebDriver instance itself. 
 
 ### Managing windows
 
@@ -46,6 +41,8 @@ driver.switchWindow();   // switchs focus to the last window opened
 // do something with that window
 driver.closeWindow();    // closes the current window and switches focus to the last opened window
 ```
+
+Note: if this is an iframe and you want to handle elements automatically, see the section below on IFrames
 
 If you want to manage this yourself, you can use DriverManager.switchto() and then use whatever selenium provides to change window focus.
 
@@ -118,9 +115,9 @@ You can also get lists of elements relative to another element:
 Supporting iframes only requires you to register the iframe locator. Each time you interact with the element, the framework will automatically switch focus to the iframe, locate and get the element then switch back to the default content. 
 
 ```java
-public TextInputElement getTextFieldElement() {
+public TextInputElement getElementInIFrame() {
     return driver.createTextElement(By.xpath("//body[contains(@class,'frameClass')]"))
-                         .registerIFrame(getIFrameElement());
+                         .withIFrame(getIFrameElement());
 }
 
 public BaseElement getIFrameElement() {
@@ -128,49 +125,28 @@ public BaseElement getIFrameElement() {
 }
 ```
 
-## Application-specific page waits
+### Auto-hovering on elements
 
-In a lot of applications there are general cases where you need to wait for on page load, even after the browser thinks the page content is complete. This might be a 'loading...' lightbox, a whirlygig, or could even be that the page heavily uses javascript to generate the page elements. To handle that, you can add any number of generic page waiters using DriverManager#addPageLoadWaiter
+There are cases where elements won't show without hovering on another element. This can be tedious in the code to have to handle this hovering any time you interact with the element. To handle this, you can use withHover() 
 
 ```java
-DriverManager.addPageLoadWaiter(new PageLoadWaiter() {
-            @Override
-            public TimeUnit getTimeUnit() {
-                return TimeUnit.SECONDS;
-            }
+public ButtonElement getElementRequiringHover() {
+    return driver.createButtonElement(By.xpath("//body[contains(@class,'hovermenu')]"))
+                         .withHover(getHoverElement());
+}
 
-            @Override
-            public int getTimeout() {
-                // how long to wait before timing out
-                return 5;
-            }
-
-            @Override
-            public boolean isSatisfied() {
-                // say we want to make sure there's no spinning whirlygig on the page
-                return !driver.createBaseElement(By.xpath("path-to-whirlygig")).isDisplayed();
-            }
-        });
+public BaseElement getHoverElement() {
+    return container.createBaseElement(By.xpath("//div"));
+}
 ```
 
-## Sample Test Suite
+### Autoscrolling elements
 
-To give you a better idea of how this framework might look in practice, we've included an example. This example uses JUnit and a few simple tests. 
+This should be rarely needed because Selenium handles scrolling to elements automatically. That said, we have found some cases where we need to do that autoscroll. 
 
-The tests are against a website used for security penetration testing by OWASP/IBM: [Altoro Mutual](https://www.owasp.org/index.php/AltoroMutual). 
-
-All tests are located in the *integration-test* directory and configured to run on *OSX*. If you're using something different, you'll need to change ChromeSettings#getChromeBinary() to configure the local path where you've installed chromedriver. For OSX we've bundled a version of chromedriver as a resource for convenience. 
-
-In IntelliJ, make sure to mark the integration-test/java directory as a 'test sources' directory and the integration-test/resources directory as a 'test resources' directory.
-
-This should give you a basic idea of how we're setting up our test classes and utilizing the framework. We like to keep the Page class super simple and ONLY return elements, putting the logic in an action class (ie: Account, Session), and call the action classes from the test cases. 
-
-### JUnit modifications
-
-We've bundled our modifications to JUnit in the sample suite. This allows any test case extending BaseUITest to start the browser and handle screenshots for failures.
-
-One of the issues with JUnit out of the box is that @Before, @Test and @After are run as a group before TestWatcher calls the #failed method. This is fine in most cases, and you can put a screenshot handler in #failed. This breaks down, howver, if you have an @After method that navigates to a different page - the screenshot taken will be from the @After method and not the @Test method at the time of the failure. We've worked around this and made it so that the screenshots that occur in @BeforeClass, @Before, @Test, @After and @AfterClass have slightly different names so it's clear where the screenshot is from. 
-
-The screenshots are, by default, automatically placed in the project /target/screenshots and /target/html-screenshots. 
-
-If you pass a file name that is of the Java class syntax, i.e. ```new Screenshot(driver).takeScreenshot("mytestfolder.TestClass.testMethod")``` or ```new Screenshot(driver).takeScreenshot("mytestfolder.TestClass")```, the project /target/screenshots directory will automatically generate subfolders /mytestfolder/TestClass/ with screenshots named either after the test method in the string (i.e. ```testMethod_132532.png```), or the test class (i.e. ```testclass_1230432.png```) if the test method is not appended in the file name.
+```java
+public BaseElement getAutoscrolledElement() {
+    return driver.createBaseElement(By.xpath("//body[contains(@class,'someelement')]"))
+                         .withAutoScrollIntoView()
+}
+```
