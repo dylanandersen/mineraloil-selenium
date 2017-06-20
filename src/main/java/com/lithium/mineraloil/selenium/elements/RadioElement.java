@@ -25,11 +25,10 @@ public class RadioElement implements Element {
 
     public List<RadioElement> toList() {
         return locateElements().stream()
-                               .map(element -> new RadioElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new RadioElement(driver, element).withParent(getParentElement())
+                                                                                .withIframe(getIframeElement())
+                                                                                .withHover(getHoverElement())
+                                                                                .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 

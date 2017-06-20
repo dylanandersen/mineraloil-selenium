@@ -27,11 +27,10 @@ public class BaseElement implements Element<BaseElement> {
 
     public List<BaseElement> toList() {
         return locateElements().stream()
-                               .map(element -> new BaseElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new BaseElement(driver, element).withParent(getParentElement())
+                                                                               .withIframe(getIframeElement())
+                                                                               .withHover(getHoverElement())
+                                                                               .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 }

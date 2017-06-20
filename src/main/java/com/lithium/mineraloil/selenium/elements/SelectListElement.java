@@ -30,11 +30,10 @@ public class SelectListElement implements Element, SelectList {
 
     public List<SelectListElement> toList() {
         return locateElements().stream()
-                               .map(element -> new SelectListElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new SelectListElement(driver, element).withParent(getParentElement())
+                                                                                     .withIframe(getIframeElement())
+                                                                                     .withHover(getHoverElement())
+                                                                                     .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 

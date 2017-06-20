@@ -28,12 +28,11 @@ public class ImageElement implements Element {
 
     public List<ImageElement> toList() {
         return locateElements().stream()
-                               .map(element -> new ImageElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new ImageElement(driver, element).withParent(getParentElement())
+                                                                                .withParent(getParentElement())
+                                                                                .withIframe(getIframeElement())
+                                                                                .withHover(getHoverElement())
+                                                                                .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 

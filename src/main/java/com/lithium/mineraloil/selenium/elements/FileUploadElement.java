@@ -29,11 +29,10 @@ public class FileUploadElement implements Element {
 
     public List<FileUploadElement> toList() {
         return locateElements().stream()
-                               .map(element -> new FileUploadElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new FileUploadElement(driver, element).withParent(getParentElement())
+                                                                                     .withIframe(getIframeElement())
+                                                                                     .withHover(getHoverElement())
+                                                                                     .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 

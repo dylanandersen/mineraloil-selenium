@@ -24,11 +24,10 @@ public class ButtonElement implements Element {
 
     public List<ButtonElement> toList() {
         return locateElements().stream()
-                               .map(element -> new ButtonElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new ButtonElement(driver, element).withParent(getParentElement())
+                                                                                 .withIframe(getIframeElement())
+                                                                                 .withHover(getHoverElement())
+                                                                                 .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 }

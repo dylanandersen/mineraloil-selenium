@@ -26,11 +26,10 @@ public class TableRowElement implements Element {
 
     public List<TableRowElement> toList() {
         return locateElements().stream()
-                               .map(element -> new TableRowElement(driver, element)
-                                       .withParent(getParentElement())
-                                       .withIframe(getIframeElement())
-                                       .withHover(getHoverElement())
-                                       .withAutoScrollIntoView(isAutoScrollIntoView()))
+                               .map(element -> new TableRowElement(driver, element).withParent(getParentElement())
+                                                                                   .withIframe(getIframeElement())
+                                                                                   .withHover(getHoverElement())
+                                                                                   .withAutoScrollIntoView(isAutoScrollIntoView()))
                                .collect(Collectors.toList());
     }
 
