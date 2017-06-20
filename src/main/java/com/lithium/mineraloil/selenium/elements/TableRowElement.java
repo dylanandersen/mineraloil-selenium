@@ -2,36 +2,36 @@ package com.lithium.mineraloil.selenium.elements;
 
 import lombok.experimental.Delegate;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TableRowElement implements Element {
     private List<BaseElement> columns;
 
     @Delegate
     private final ElementImpl<TableRowElement> elementImpl;
-    private final Driver driver;
 
     TableRowElement(Driver driver, By by) {
-        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
     }
 
-    private TableRowElement(Driver driver, WebElement webElement) {
-        this.driver = driver;
-        elementImpl = new ElementImpl(driver, this, webElement);
+    private TableRowElement(Driver driver, By by, int index) {
+        elementImpl = new ElementImpl(driver, this, by, index);
     }
 
     public List<TableRowElement> toList() {
-        return locateElements().stream()
-                               .map(element -> new TableRowElement(driver, element).withParent(getParentElement())
-                                                                                   .withIframe(getIframeElement())
-                                                                                   .withHover(getHoverElement())
-                                                                                   .withAutoScrollIntoView(isAutoScrollIntoView()))
-                               .collect(Collectors.toList());
+        List<TableRowElement> elements = new ArrayList<>();
+        IntStream.range(0, locateElements().size()).forEach(index -> {
+            elements.add(new TableRowElement(elementImpl.driver, elementImpl.by, index).withParent(getParentElement())
+                                                                                       .withIframe(getIframeElement())
+                                                                                       .withHover(getHoverElement())
+                                                                                       .withAutoScrollIntoView(isAutoScrollIntoView()));
+        });
+        return elements;
     }
+
 
     public List<BaseElement> getColumns() {
         if (columns == null) {

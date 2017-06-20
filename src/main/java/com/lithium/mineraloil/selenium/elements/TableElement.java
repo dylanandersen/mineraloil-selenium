@@ -5,13 +5,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TableElement implements Element {
     private List<TableRowElement> rows;
@@ -19,26 +19,26 @@ public class TableElement implements Element {
 
     @Delegate
     private final ElementImpl<TableElement> elementImpl;
-    private final Driver driver;
 
     TableElement(Driver driver, By by) {
-        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
     }
 
-    private TableElement(Driver driver, WebElement webElement) {
-        this.driver = driver;
-        elementImpl = new ElementImpl(driver, this, webElement);
+    private TableElement(Driver driver, By by, int index) {
+        elementImpl = new ElementImpl(driver, this, by, index);
     }
 
     public List<TableElement> toList() {
-        return locateElements().stream()
-                               .map(element -> new TableElement(driver, element).withParent(getParentElement())
-                                                                                .withIframe(getIframeElement())
-                                                                                .withHover(getHoverElement())
-                                                                                .withAutoScrollIntoView(isAutoScrollIntoView()))
-                               .collect(Collectors.toList());
+        List<TableElement> elements = new ArrayList<>();
+        IntStream.range(0, locateElements().size()).forEach(index -> {
+            elements.add(new TableElement(elementImpl.driver, elementImpl.by, index).withParent(getParentElement())
+                                                                                    .withIframe(getIframeElement())
+                                                                                    .withHover(getHoverElement())
+                                                                                    .withAutoScrollIntoView(isAutoScrollIntoView()));
+        });
+        return elements;
     }
+
 
     public int size() {
         return 1 + getRows().size();

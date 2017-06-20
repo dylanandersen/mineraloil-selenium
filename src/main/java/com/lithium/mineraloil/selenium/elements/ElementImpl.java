@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static com.lithium.mineraloil.selenium.elements.Waiter.DISPLAY_WAIT_S;
+import static com.lithium.mineraloil.selenium.elements.Waiter.INTERACT_WAIT_S;
 import static com.lithium.mineraloil.selenium.elements.Waiter.await;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -28,6 +29,7 @@ class ElementImpl<T extends Element> implements Element<T> {
     private int LOCATE_RETRIES = 2;
     protected Element referenceElement;
     private static boolean autoHoverOnInput;
+    private int index = -1;
 
     @Getter protected boolean autoScrollIntoView = false;
     @Getter protected Element iframeElement;
@@ -35,18 +37,17 @@ class ElementImpl<T extends Element> implements Element<T> {
     @Getter protected Element parentElement;
     @Getter protected By by;
 
-    protected WebElement webElement;
-
     public ElementImpl(Driver driver, Element<T> referenceElement, By by) {
         this.driver = driver;
         this.referenceElement = referenceElement;
         this.by = by;
     }
 
-    public ElementImpl(Driver driver, Element<T> referenceElement, WebElement webElement) {
+    public ElementImpl(Driver driver, Element<T> referenceElement, By by, int index) {
         this.driver = driver;
         this.referenceElement = referenceElement;
-        this.webElement = webElement;
+        this.by = by;
+        this.index = index;
     }
 
     public ElementImpl(Driver driver, Element<T> referenceElement, Element parentElement, By by) {
@@ -58,8 +59,8 @@ class ElementImpl<T extends Element> implements Element<T> {
 
     @Override
     public WebElement locateElement() {
-        // the class was initialized with a webElement so use it
-        if (webElement != null) return webElement;
+        // the class was initialized with an index so use it
+        if (index >= 0) return locateElements().get(index);
 
         WebElement element;
         if (isWithinIFrame()) {
@@ -98,13 +99,15 @@ class ElementImpl<T extends Element> implements Element<T> {
         if (hoverElement != null && hoverElement.isDisplayed()) hoverElement.hover();
 
         if (parentElement != null) {
-            By parentBy = by;
+            By parentBy;
             if (by instanceof ByXPath) {
                 parentBy = getByForParentElement(by);
+            } else {
+                parentBy = by;
             }
-            elements = parentElement.locateElement().findElements(parentBy);
+            elements = getWebElements(() -> parentElement.locateElement().findElements(parentBy));
         } else {
-            elements = driver.findElements(by);
+            elements = getWebElements(() -> driver.findElements(by));
         }
 
         if (autoScrollIntoView && !elements.isEmpty()) {
@@ -114,15 +117,37 @@ class ElementImpl<T extends Element> implements Element<T> {
         return elements;
     }
 
-    public <T> T callSelenium(Callable<T> callable) {
+    private <T> T callSelenium(Callable<T> callable) {
         // default exception that gets thrown on a timeout
         WebDriverException exception = new WebDriverException("Unable to locate element: " + getBy());
 
         int retries = 0;
-        long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(Waiter.INTERACT_WAIT_S);
+        long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(INTERACT_WAIT_S);
         while (Instant.now().toEpochMilli() < expireTime && retries < LOCATE_RETRIES) {
             try {
                 return callable.call();
+            } catch (WebDriverException e) {
+                exception = e; //update the exception message to reflect what selenium is reporting
+                retries++;
+            } catch (Exception e) {
+                Throwables.propagate(e);
+            }
+        }
+        throw new NoSuchElementException(exception.getMessage());
+    }
+
+    public List<WebElement> getWebElements(Callable<List<WebElement>> callable) {
+        // default exception that gets thrown on a timeout
+        WebDriverException exception = new WebDriverException("Unable to locate element: " + getBy());
+
+        int retries = 0;
+        long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(INTERACT_WAIT_S);
+        while (Instant.now().toEpochMilli() < expireTime && retries < LOCATE_RETRIES) {
+            try {
+                List<WebElement> elements = callable.call();
+                if (elements.size() == 0) continue;
+                ;
+                return elements;
             } catch (WebDriverException e) {
                 exception = e; //update the exception message to reflect what selenium is reporting
                 retries++;

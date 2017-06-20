@@ -2,34 +2,34 @@ package com.lithium.mineraloil.selenium.elements;
 
 import lombok.experimental.Delegate;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CheckboxElement implements Element {
     @Delegate
     private final ElementImpl<CheckboxElement> elementImpl;
-    private final Driver driver;
 
     CheckboxElement(Driver driver, By by) {
-        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
     }
 
-    private CheckboxElement(Driver driver, WebElement webElement) {
-        this.driver = driver;
-        elementImpl = new ElementImpl(driver, this, webElement);
+    private CheckboxElement(Driver driver, By by, int index) {
+        elementImpl = new ElementImpl(driver, this, by, index);
     }
 
     public List<CheckboxElement> toList() {
-        return locateElements().stream()
-                               .map(element -> new CheckboxElement(driver, element).withParent(getParentElement())
-                                                                                   .withIframe(getIframeElement())
-                                                                                   .withHover(getHoverElement())
-                                                                                   .withAutoScrollIntoView(isAutoScrollIntoView()))
-                               .collect(Collectors.toList());
+        List<CheckboxElement> elements = new ArrayList<>();
+        IntStream.range(0, locateElements().size()).forEach(index -> {
+            elements.add(new CheckboxElement(elementImpl.driver, elementImpl.by, index).withParent(getParentElement())
+                                                                                       .withIframe(getIframeElement())
+                                                                                       .withHover(getHoverElement())
+                                                                                       .withAutoScrollIntoView(isAutoScrollIntoView()));
+        });
+        return elements;
     }
+
 
     public void check() {
         if (!isChecked()) elementImpl.click();

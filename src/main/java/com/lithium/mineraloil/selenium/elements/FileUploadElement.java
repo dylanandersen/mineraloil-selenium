@@ -4,36 +4,35 @@ import lombok.experimental.Delegate;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class FileUploadElement implements Element {
     @Delegate
     private final ElementImpl<FileUploadElement> elementImpl;
-    private final Driver driver;
 
     FileUploadElement(Driver driver, By by) {
-        this.driver = driver;
         elementImpl = new ElementImpl(driver, this, by);
     }
 
-    private FileUploadElement(Driver driver, WebElement webElement) {
-        this.driver = driver;
-        elementImpl = new ElementImpl(driver, this, webElement);
+    private FileUploadElement(Driver driver, By by, int index) {
+        elementImpl = new ElementImpl(driver, this, by, index);
     }
 
     public List<FileUploadElement> toList() {
-        return locateElements().stream()
-                               .map(element -> new FileUploadElement(driver, element).withParent(getParentElement())
-                                                                                     .withIframe(getIframeElement())
-                                                                                     .withHover(getHoverElement())
-                                                                                     .withAutoScrollIntoView(isAutoScrollIntoView()))
-                               .collect(Collectors.toList());
+        List<FileUploadElement> elements = new ArrayList<>();
+        IntStream.range(0, locateElements().size()).forEach(index -> {
+            elements.add(new FileUploadElement(elementImpl.driver, elementImpl.by, index).withParent(getParentElement())
+                                                                                         .withIframe(getIframeElement())
+                                                                                         .withHover(getHoverElement())
+                                                                                         .withAutoScrollIntoView(isAutoScrollIntoView()));
+        });
+        return elements;
     }
 
     public void type(final String text) {
