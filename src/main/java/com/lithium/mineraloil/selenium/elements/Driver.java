@@ -1,10 +1,8 @@
 package com.lithium.mineraloil.selenium.elements;
 
 import com.google.common.base.Preconditions;
-import com.jayway.awaitility.core.ConditionTimeoutException;
 import com.lithium.mineraloil.selenium.browsers.PageLoadWaiter;
 import com.lithium.mineraloil.selenium.exceptions.DriverNotFoundException;
-import com.lithium.mineraloil.selenium.exceptions.PageLoadWaiterTimeoutException;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +89,6 @@ public class Driver {
             startDriver();
             getDriver().get(url);
         }
-        waitForPageLoad();
     }
 
     private WebDriver getDriver() {
@@ -136,26 +133,6 @@ public class Driver {
 
     public boolean isDriverStarted() {
         return getDriverCount() > 0;
-    }
-
-    public void addPageLoadWaiter(PageLoadWaiter pageLoadWaiter) {
-        pageLoadWaiters.add(pageLoadWaiter);
-    }
-
-    public void waitForPageLoad() {
-        for (PageLoadWaiter pageLoadWaiter : pageLoadWaiters) {
-            String callerClass = pageLoadWaiter.getClass().getEnclosingClass().getName();
-            String callerPackage = pageLoadWaiter.getClass().getEnclosingClass().getPackage().getName();
-            String exceptionMessage = String.format("Timed out in PageLoadWaiter: package '%s', class '%s'", callerPackage, callerClass);
-
-            try {
-                Waiter.await()
-                      .atMost(pageLoadWaiter.getTimeout(), pageLoadWaiter.getTimeUnit())
-                      .until(() -> pageLoadWaiter.isSatisfied());
-            } catch (ConditionTimeoutException e) {
-                throw new PageLoadWaiterTimeoutException(exceptionMessage);
-            }
-        }
     }
 
     public LogEntries getConsoleLog() {

@@ -36,7 +36,7 @@ public class BaseElementTest extends BaseTest {
     @Test
     public void elementCollection() {
         List<BaseElement> elements = driver.createBaseElement(By.xpath("//div")).toList();
-        assertThat(elements.size()).isGreaterThan(0);
+        assertThat(elements).hasSize(9);
     }
 
     @Test
