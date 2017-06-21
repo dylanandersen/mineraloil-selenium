@@ -6,15 +6,11 @@ public interface HasChildren {
 
     BaseElement createBaseElement(By by);
 
-    ButtonElement createButtonElement(By by);
-
     CheckboxElement createCheckboxElement(By by);
 
     RadioElement createRadioElement(By by);
 
     ImageElement createImageElement(By by);
-
-    LinkElement createLinkElement(By by);
 
     TextElement createTextElement(By by);
 

@@ -358,11 +358,6 @@ class ElementImpl<T extends Element> implements Element<T> {
     }
 
     @Override
-    public ButtonElement createButtonElement(By by) {
-        return new ButtonElement(driver, by).withParent(this);
-    }
-
-    @Override
     public CheckboxElement createCheckboxElement(By by) {
         return new CheckboxElement(driver, by).withParent(this);
     }
@@ -375,11 +370,6 @@ class ElementImpl<T extends Element> implements Element<T> {
     @Override
     public ImageElement createImageElement(By by) {
         return new ImageElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public LinkElement createLinkElement(By by) {
-        return new LinkElement(driver, by).withParent(this);
     }
 
     @Override

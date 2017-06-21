@@ -184,10 +184,6 @@ public class Driver {
         return new BaseElement(this, by);
     }
 
-    public ButtonElement createButtonElement(By by) {
-        return new ButtonElement(this, by);
-    }
-
     public RadioElement createRadioElement(By by) {
         return new RadioElement(this, by);
     }
@@ -202,10 +198,6 @@ public class Driver {
 
     public TextElement createTextElement(By by) {
         return new TextElement(this, by);
-    }
-
-    public LinkElement createLinkElement(By by) {
-        return new LinkElement(this, by);
     }
 
     public SelectListElement createSelectListElement(By by) {
