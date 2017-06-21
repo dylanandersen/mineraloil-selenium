@@ -53,9 +53,9 @@ public class DriverTest extends BaseTest {
         assertThat(driver.getTitle()).isEqualTo("Test");
         driver.get(GOOGLE_URL);
         assertThat(driver.getCurrentUrl()).contains(GOOGLE_URL);
-        assertThat(driver.getNumberOfDrivers()).isEqualTo(2);
+        assertThat(driver.getDriverCount()).isEqualTo(2);
         driver.stopDriver();
-        assertThat(driver.getNumberOfDrivers()).isEqualTo(1);
+        assertThat(driver.getDriverCount()).isEqualTo(1);
         assertThat(driver.getCurrentUrl()).isEqualTo(getTestUrl());
     }
 

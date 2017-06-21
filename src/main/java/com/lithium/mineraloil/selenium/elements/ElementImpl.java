@@ -177,7 +177,6 @@ class ElementImpl<T extends Element> implements Element<T> {
 
         callSelenium(() -> {
             locateElement().click();
-            driver.waitForPageLoad();
             return null;
         });
     }
@@ -190,7 +189,6 @@ class ElementImpl<T extends Element> implements Element<T> {
 
         callSelenium(() -> {
             driver.getActions().moveToElement(locateElement(), x, y).click().perform();
-            driver.waitForPageLoad();
             return null;
         });
     }
@@ -203,7 +201,6 @@ class ElementImpl<T extends Element> implements Element<T> {
 
         callSelenium(() -> {
             driver.getActions().doubleClick(locateElement());
-            driver.waitForPageLoad();
             return null;
         });
     }
