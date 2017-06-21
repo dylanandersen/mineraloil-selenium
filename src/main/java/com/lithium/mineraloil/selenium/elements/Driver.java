@@ -1,7 +1,6 @@
 package com.lithium.mineraloil.selenium.elements;
 
 import com.google.common.base.Preconditions;
-import com.lithium.mineraloil.selenium.browsers.PageLoadWaiter;
 import com.lithium.mineraloil.selenium.exceptions.DriverNotFoundException;
 import lombok.Setter;
 import lombok.experimental.Delegate;
@@ -15,10 +14,8 @@ import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 public class Driver {
@@ -27,7 +24,6 @@ public class Driver {
     @Setter
     private DriverConfiguration driverConfiguration;
     private LinkedList<DriverInstance> drivers = new LinkedList<>();
-    private Set<PageLoadWaiter> pageLoadWaiters = new HashSet<>();
 
     @Delegate
     public WebdriverActions webdriver() {
