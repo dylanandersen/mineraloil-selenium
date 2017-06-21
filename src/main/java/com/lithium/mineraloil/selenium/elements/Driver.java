@@ -43,14 +43,6 @@ public class Driver {
         log.info("User Agent: " + getUserAgent());
     }
 
-    public void useDriver(WebDriver driver) {
-        Preconditions.checkNotNull(driver);
-        DriverInstance driverInstance = new DriverInstance(driver);
-        drivers.add(driverInstance);
-        resetActiveDriverIndex();
-        log.info("User Agent: " + getUserAgent());
-    }
-
     public void stopDriver() {
         DriverInstance driverInstance = drivers.removeLast();
         log.info(String.format("Stopping Last Opened Driver. Drivers Running: %s", getDriverCount()));
