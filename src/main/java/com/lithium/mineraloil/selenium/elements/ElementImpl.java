@@ -29,9 +29,9 @@ class ElementImpl<T extends Element> implements Element<T> {
     protected Driver driver;
     private int LOCATE_RETRIES = 2;
     protected Element referenceElement;
-    private static boolean autoHoverOnInput;
     private int index = -1;
 
+    @Getter private static boolean autoHoverOnInput;
     @Getter protected boolean autoScrollIntoView = false;
     @Getter protected Element iframeElement;
     @Getter protected Element hoverElement;
@@ -137,7 +137,7 @@ class ElementImpl<T extends Element> implements Element<T> {
         throw new NoSuchElementException(exception.getMessage());
     }
 
-    public List<WebElement> getWebElements(Callable<List<WebElement>> callable) {
+    private List<WebElement> getWebElements(Callable<List<WebElement>> callable) {
         // default exception that gets thrown on a timeout
         WebDriverException exception = new WebDriverException("Unable to locate element: " + getBy());
 
@@ -159,10 +159,6 @@ class ElementImpl<T extends Element> implements Element<T> {
 
         // no elements found so return an empty list
         return new ArrayList<>();
-    }
-
-    public static boolean getAutoHoverOnInput() {
-        return autoHoverOnInput;
     }
 
     public static void setAutoHoverOnInput(Boolean value) {
@@ -349,51 +345,6 @@ class ElementImpl<T extends Element> implements Element<T> {
         });
     }
 
-    @Override
-    public BaseElement createBaseElement(By by) {
-        return new BaseElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public CheckboxElement createCheckboxElement(By by) {
-        return new CheckboxElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public RadioElement createRadioElement(By by) {
-        return new RadioElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public ImageElement createImageElement(By by) {
-        return new ImageElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public TextElement createTextElement(By by) {
-        return new TextElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public SelectListElement createSelectListElement(By by) {
-        return new SelectListElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public FileUploadElement createFileUploadElement(By by) {
-        return new FileUploadElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public TableElement createTableElement(By by) {
-        return new TableElement(driver, by).withParent(this);
-    }
-
-    @Override
-    public TableRowElement createTableRowElement(By by) {
-        return new TableRowElement(driver, by).withParent(this);
-    }
-
     public void flash() {
         waitUntilDisplayed();
         final WebElement element = locateElement();
@@ -527,6 +478,51 @@ class ElementImpl<T extends Element> implements Element<T> {
     @Override
     public void waitUntilNotEnabled(TimeUnit timeUnit, final int timeout) {
         await().atMost(timeout, timeUnit).until(() -> !isDisplayed() || !isEnabled());
+    }
+
+    @Override
+    public BaseElement createBaseElement(By by) {
+        return new BaseElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public CheckboxElement createCheckboxElement(By by) {
+        return new CheckboxElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public RadioElement createRadioElement(By by) {
+        return new RadioElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public ImageElement createImageElement(By by) {
+        return new ImageElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public TextElement createTextElement(By by) {
+        return new TextElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public SelectListElement createSelectListElement(By by) {
+        return new SelectListElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public FileUploadElement createFileUploadElement(By by) {
+        return new FileUploadElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public TableElement createTableElement(By by) {
+        return new TableElement(driver, by).withParent(this);
+    }
+
+    @Override
+    public TableRowElement createTableRowElement(By by) {
+        return new TableRowElement(driver, by).withParent(this);
     }
 
 }
