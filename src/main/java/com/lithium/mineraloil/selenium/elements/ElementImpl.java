@@ -106,9 +106,9 @@ class ElementImpl<T extends Element> implements Element<T> {
             } else {
                 parentBy = by;
             }
-            elements = getWebElements(() -> parentElement.locateElement().findElements(parentBy));
+            elements = getListWebElements(() -> parentElement.locateElement().findElements(parentBy));
         } else {
-            elements = getWebElements(() -> driver.findElements(by));
+            elements = getListWebElements(() -> driver.findElements(by));
         }
 
         if (autoScrollIntoView && !elements.isEmpty()) {
@@ -137,10 +137,9 @@ class ElementImpl<T extends Element> implements Element<T> {
         throw new NoSuchElementException(exception.getMessage());
     }
 
-    private List<WebElement> getWebElements(Callable<List<WebElement>> callable) {
-        // default exception that gets thrown on a timeout
-        WebDriverException exception = new WebDriverException("Unable to locate element: " + getBy());
-
+    // this is used as a best effort to make sure lists have an item in them.
+    // If nothing found by the timeout, return an empty list
+    private List<WebElement> getListWebElements(Callable<List<WebElement>> callable) {
         int retries = 0;
         long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(INTERACT_WAIT_S);
         while (Instant.now().toEpochMilli() < expireTime && retries < LOCATE_RETRIES) {
@@ -150,7 +149,6 @@ class ElementImpl<T extends Element> implements Element<T> {
                 ;
                 return elements;
             } catch (WebDriverException e) {
-                exception = e; //update the exception message to reflect what selenium is reporting
                 retries++;
             } catch (Exception e) {
                 Throwables.propagate(e);
