@@ -71,10 +71,6 @@ public class Driver {
         return getDriver().toString();
     }
 
-    public int getNumberOfDrivers() {
-        return getDriverCount();
-    }
-
     public void get(String url) {
         try {
             getDriver().get(url);
@@ -141,7 +137,7 @@ public class Driver {
         activeDriverIndex = getDriverCount() - 1;
     }
 
-    private int getDriverCount() {
+    public int getDriverCount() {
         return drivers.size();
     }
 
