@@ -132,7 +132,7 @@ public class TextElement implements Element {
         long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(Waiter.DISPLAY_WAIT_S);
         while (Instant.now().toEpochMilli() < expireTime && retries < 2) {
             try {
-                elementImpl.locateElement().sendKeys(text);
+                elementImpl.locateElement().sendKeys(Keys.chord(Keys.COMMAND, Keys.ARROW_DOWN) + text);
                 return;
             } catch (WebDriverException e) {
                 retries++;
@@ -192,15 +192,10 @@ public class TextElement implements Element {
 
     public boolean isEmpty() {
         try {
-            Waiter.await().atMost(1, SECONDS)
-                   .ignoreExceptions()
-                   .until(() -> {
-                       if (isDisplayed()) {
-                           return StringUtils.isBlank(locateElement().getText().trim());
-                       } else {
-                           return true;
-                       }
-                   });
+            Waiter.await()
+                  .atMost(1, SECONDS)
+                  .ignoreExceptions()
+                  .until(() -> !isDisplayed() || StringUtils.isBlank(locateElement().getText().trim()));
             return true;
         } catch (ConditionTimeoutException e) {
             return false;
