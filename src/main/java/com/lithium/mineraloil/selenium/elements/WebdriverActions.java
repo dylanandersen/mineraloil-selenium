@@ -78,7 +78,7 @@ class WebdriverActions {
         driver.manage().deleteCookie(cookie);
     }
 
-    public void addCoookie(Cookie cookie) {
+    public void addCookie(Cookie cookie) {
         driver.manage().addCookie(cookie);
     }
 
