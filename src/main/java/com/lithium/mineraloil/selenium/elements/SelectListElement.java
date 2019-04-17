@@ -43,29 +43,33 @@ public class SelectListElement implements Element<SelectListElement>, SelectList
     public String getSelectedOption() {
         int retries = 0;
         long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(Waiter.DISPLAY_WAIT_S);
-        while (Instant.now().toEpochMilli() < expireTime && retries < 2) {
+        while (true) {
             try {
                 return new Select(elementImpl.locateElement()).getFirstSelectedOption().getText();
             } catch (WebDriverException e) {
                 retries++;
+                if(Instant.now().toEpochMilli() >= expireTime || retries > 1) {
+                    throw e;
+                }
             }
         }
-        throw new NoSuchElementException("Unable to locate element: " + getBy());
     }
 
     @Override
     public void select(String optionText) {
         int retries = 0;
         long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(Waiter.DISPLAY_WAIT_S);
-        while (Instant.now().toEpochMilli() < expireTime && retries < 2) {
+        while (true) {
             try {
                 new Select(elementImpl.locateElement()).selectByVisibleText(optionText);
                 return;
             } catch (WebDriverException e) {
                 retries++;
+                if(Instant.now().toEpochMilli() >= expireTime || retries > 1) {
+                    throw e;
+                }
             }
         }
-        throw new NoSuchElementException("Unable to locate element: " + getBy());
     }
 
     @Override
@@ -88,7 +92,7 @@ public class SelectListElement implements Element<SelectListElement>, SelectList
     public List<String> getAvailableOptions() {
         int retries = 0;
         long expireTime = Instant.now().toEpochMilli() + SECONDS.toMillis(Waiter.DISPLAY_WAIT_S);
-        while (Instant.now().toEpochMilli() < expireTime && retries < 2) {
+        while (true) {
             try {
                 return new Select(elementImpl.locateElement()).getOptions()
                                                               .stream()
@@ -96,8 +100,11 @@ public class SelectListElement implements Element<SelectListElement>, SelectList
                                                               .collect(Collectors.toList());
             } catch (WebDriverException e) {
                 retries++;
+                if(Instant.now().toEpochMilli() >= expireTime || retries > 1) {
+                    throw e;
+                }
             }
         }
-        throw new NoSuchElementException("Unable to locate element: " + getBy());
     }
 }
+
